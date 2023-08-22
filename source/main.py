@@ -7,6 +7,8 @@ import discord
 import asyncio
 import yaml
 
+from datetime import datetime
+
 from PIL import Image, ImageFont, ImageDraw
 
 intents = discord.Intents.default()
@@ -31,14 +33,57 @@ TOTAL_NUMBER_OF_POSITIVE_TRAITS_EASY = 3
 TOTAL_NUMBER_OF_POSITIVE_TRAITS_HARD = 2
 TOTAL_NUMBER_OF_POSITIVE_TRAITS_IMPOSSIBLE = 1
 
+ersetzungswörterbuch = {
+    ord('Ü'): 'Ue',
+    ord('Ä'): 'Ae',
+    ord('Ö'): 'Oe',
+    ord('ü'): 'ue',
+    ord('ä'): 'ae',
+    ord('ö'): 'oe'
+}
 
-async def create_Challenge_picture(game_settings: dict) -> None:
+class User:
+    def __init__(self, user_id, user_name, user_display_name):
+        self.user_id = user_id
+        self.user_name = user_name
+        self.user_display_name = user_display_name
+
+
+async def create_Challenge_picture(game_settings: dict, user: User) -> None:
+    name = "Technik Tüftler"
+    game_settings = {"location": "Riverside", "negative_traits": [],
+                     "positive_traits": ["Katzenaugen", "Anmutig", "Glückspilz"],
+                     "mission": "Überlebe einen Monat."}
     img = Image.open("../files/post_apocalypse_city.png")
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype("../files/CrotahFreeVersionItalic-z8Ev3.ttf", 18)
-    pos = (0, 0)
+    font = ImageFont.truetype("../files/CrotahFreeVersionItalic-z8Ev3.ttf", 25)
     color = (255, 255, 255)
-    draw.text(pos, "TEXT", fill=color, font=font)
+    # Ersteller
+    pos = (10, 10)
+    zeitstempel = datetime.now().strftime("%Y-%m-%d")
+    text = f"Einfache Challenge, {name.translate(ersetzungswörterbuch)}, {zeitstempel}"
+    draw.text(pos, text, fill=color, font=font)
+    # Location
+    location = game_settings["location"]
+    pos = (10, 100)
+    text = f"Starte in: {location} als Arbeitsloser"
+    draw.text(pos, text, fill=color, font=font)
+    # Traits
+    text = f"Mit den positiven Traits:"
+    pos = (10, 140)
+    draw.text(pos, text, fill=color, font=font)
+    pos_x = 350
+    pos_y = 140
+    for element in game_settings["positive_traits"]:
+        pos = (pos_x, pos_y)
+        draw.text(pos, element.translate(ersetzungswörterbuch), fill=color, font=font)
+        pos_y += 20
+    # Mission
+    mission = game_settings["mission"]
+    pos = (10, pos_y + 50)
+    draw.text(pos, f"Deine Mission: {mission.translate(ersetzungswörterbuch)}", fill=color,
+              font=font)
+
     img.save("../created_challenges/test.png")
 
 
@@ -116,13 +161,6 @@ class CustomChallenge(discord.ui.View):
         await interaction.message.edit(view=self)
         await interaction.response.defer()
         self.stop()
-
-
-class User:
-    def __init__(self, user_id, user_name, user_display_name):
-        self.user_id = user_id
-        self.user_name = user_name
-        self.user_display_name = user_display_name
 
 
 @client.event
