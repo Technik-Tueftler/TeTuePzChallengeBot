@@ -20,6 +20,7 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+CHANNEL_CUSTOM_CHALLENGE_NAME = os.getenv("CHANNEL_CUSTOM_CHALLENGE_NAME")
 
 with open(CONFIGURATION_FILE, encoding="utf-8") as f:
     config = yaml.safe_load(f)
@@ -126,7 +127,6 @@ async def create_custom_challenge(difficulty: str) -> dict:
         time_out = 25
         while start_trait_value != 0:
             positive_trait = random.choice(LIST_OF_POSITIVE_TRAITS)
-            print(positive_trait)
             if positive_trait in game_settings["positive_traits"]:
                 continue
             if (
@@ -229,6 +229,8 @@ async def on_message(message) -> None:
     if message.author == client.user:
         return
     if message.content.startswith("!Challenge"):
+        if message.channel.name != CHANNEL_CUSTOM_CHALLENGE_NAME:
+            return
         user = User(
             user_id=message.author.id,
             user_name=message.author.name,
