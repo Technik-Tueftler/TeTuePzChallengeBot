@@ -1,13 +1,15 @@
 EasyStartLocation:
   Rosewood: 0
   Riverside: 1
-  Muldraugh: 6
 HardStartLocation:
   Muldraugh: 4
   Westpoint: 8
 ImpossibleStartLocation:
   Muldraugh: 1
   Westpoint: 5
+EasyMission: [Überlebe einen Monat., Baue eine Standard-Base mit Strom- und Wasserversorgung., Töte 1000 Zombies]
+HardMission: []
+ImpossibleMission: []
 NegativePropertiesValue:
   Sonntagsfahrer: 1
   Feige: 2
@@ -78,9 +80,10 @@ NegativePropertiesDescription:
   Fettleibig: Reduzierte Renngeschwindigkeit, sehr geringe Ausdauer und anfälliger für Verletzungen.
   Schwach: Geringeres Zurückstoßen von Gegnern und weniger Tragekapazität.
   Taub: Kann nichts hören.
-PositivePropertiesValue:
+PositivePropertiesValueSubstitute:
   Geschwindigkeitsdämon: -1
   Gewandt: -2
+PositivePropertiesValue:
   Katzenaugen: -2
   Naturbursche: -2
   Schlaflos: -2
@@ -88,7 +91,7 @@ PositivePropertiesValue:
   Darm aus Stahl: -3
   Anmutig: -4
   Appetitlosigkeit: -4
-  Baseball-Spieler: 4
+  Baseball-Spieler: -4
   Ernährungswissenschaftler: -4
   Ersthelfer: -4
   Fischer: -4
