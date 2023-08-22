@@ -6,6 +6,7 @@ WORKDIR $WORKING_DIR
 COPY requirements.txt ./
 
 RUN pip install discord.py
+RUN pip install pyyaml
 RUN pip install Pillow
 
 COPY files/ ./files/
