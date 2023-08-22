@@ -6,6 +6,7 @@ import random
 import discord
 import asyncio
 import yaml
+import uuid
 
 from datetime import datetime
 
@@ -42,6 +43,7 @@ ersetzungswörterbuch = {
     ord('ö'): 'oe'
 }
 
+
 class User:
     def __init__(self, user_id, user_name, user_display_name):
         self.user_id = user_id
@@ -49,11 +51,8 @@ class User:
         self.user_display_name = user_display_name
 
 
-async def create_Challenge_picture(game_settings: dict, user: User) -> None:
-    name = "Technik Tüftler"
-    game_settings = {"location": "Riverside", "negative_traits": [],
-                     "positive_traits": ["Katzenaugen", "Anmutig", "Glückspilz"],
-                     "mission": "Überlebe einen Monat."}
+async def create_challenge_picture(game_settings: dict, user: User) -> str:
+    name = user.user_display_name
     img = Image.open("../files/post_apocalypse_city.png")
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype("../files/CrotahFreeVersionItalic-z8Ev3.ttf", 25)
@@ -83,8 +82,13 @@ async def create_Challenge_picture(game_settings: dict, user: User) -> None:
     pos = (10, pos_y + 50)
     draw.text(pos, f"Deine Mission: {mission.translate(ersetzungswörterbuch)}", fill=color,
               font=font)
-
-    img.save("../created_challenges/test.png")
+    # Bildname und Pfad
+    clean_name = name.translate(ersetzungswörterbuch).replace(" ", "")
+    zeitstempel = datetime.now().strftime("%Y%m%d")
+    unique_code = str(uuid.uuid4()).replace("-", "")
+    bildname_und_pfad = "../created_challenges/" + zeitstempel + "_" + clean_name + "_" + unique_code + ".png"
+    img.save(bildname_und_pfad)
+    return bildname_und_pfad
 
 
 async def create_custom_challenge(difficulty: str) -> dict:
@@ -180,13 +184,17 @@ async def on_message(message):
         await view.wait()
         result = view.response
         if result is not None:
-            print(result)
             if result[0] in ("Hard", "Impossible"):
                 await message.channel.send(f"Es tut mir leid, den Schwierigkeitsgrad {result[0]} kann ich noch nicht ausgeben.")
             else:
                 task_create_custom_challenge = asyncio.create_task(create_custom_challenge(result[0]))
                 return_value = await task_create_custom_challenge
-                await message.channel.send(f"{return_value}")
+                picture_path = await create_challenge_picture(return_value, user)
+                with open(picture_path, "rb") as file:
+                    image = discord.File(file)
+                    await message.channel.send(
+                        f"{user.user_display_name} das ist deine Challenge:")
+                    await message.channel.send(file=image)
 
 
 def main() -> None:
