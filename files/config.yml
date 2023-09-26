@@ -1,18 +1,27 @@
+EndTraitValue:
+  Easy: 0
+  Hard: 5
+  Impossible: 10
 EasyStartLocation:
   Rosewood: 0
-  Riverside: 1
+  Riverside: 0
 HardStartLocation:
-  Muldraugh: 4
-  Westpoint: 8
+  Muldraugh: 2
+  Westpoint: -2
 ImpossibleStartLocation:
-  Muldraugh: 1
-  Westpoint: 5
+  Muldraugh: 5
+  Westpoint: 2
 EasyMission: [Überlebe einen Monat., Baue eine Standard-Base mit Strom- und Wasserversorgung., Töte 1000 Zombies]
-HardMission: []
-ImpossibleMission: []
-NegativePropertiesValue:
+HardMission: [Erreiche bei 2 Fähigkeiten Stufe 10]
+ImpossibleMission: [Erreiche bei 5 Fähigkeiten Stufe 10, Säubere alle 4 Standard-Start-Städte, Töte 100.000 Zombies]
+MinTraits:
+  Easy: 1
+  Hard: 3
+  Impossible: 5
+NegativePropertiesValueSubstitute:
   Sonntagsfahrer: 1
   Feige: 2
+NegativePropertiesValue:
   Kurzsichtig: 2
   Langsam-Leser: 2
   Schusslig: 2
@@ -217,3 +226,51 @@ Schnell-Lerner: [Langsam-Lerner]
 Langsam-Lerner: [Schnell-Lerner]
 Stämmig: [Stark, Gebrechlich, Schwach]
 Stark: [Stämmig, Gebrechlich, Schwach]
+# Professions
+Koch: [Koch]
+Veteran: [Mutig, Adrenalinjunkie, Feige, Agoraphobisch, Klaustrophobisch, Hämatophobie]
+Fitness-Trainer: [Ernährungswissenschaftler]
+Hamburgerwender: [Koch]
+Kfz-Mechaniker: [Hobby-Kfz-Mechaniker]
+EasyProfessions:
+  Arbeitslos: 8
+  Feuerwehrmann: 0
+  Wildhüter: -4
+  Bauarbeiter: -2
+  Zimmermann: 2
+  Einbrecher: -6
+  Küchenchef: -4
+  Handwerker: -4
+  Fischer: -2
+  Holzfäller: 0
+  Hamburgerwender: 2
+  Elektriker: -4
+  Ingenieur: -4
+  Kfz-Mechaniker: -4
+HardProfessions:
+  Arbeitslos: 8
+  Feuerwehrmann: 0
+  Polizeibeamter: -4
+  Wildhüter: -4
+  Bauarbeiter: -2
+  Wachmann: -2
+  Zimmermann: 2
+  Küchenchef: -4
+  Bauer: 2
+  Fischer: -2
+  Holzfäller: 0
+  Hamburgerwender: 2
+  Schlosser: -6
+ImpossibleProfessions:
+  Feuerwehrmann: 0
+  Polizeibeamter: -4
+  Wachmann: -2
+  Küchenchef: -4
+  Bauer: 2
+  Arzt: 2
+  Veteran: -8
+  Krankenpfleger: 2
+  Holzfäller: 0
+  Fitness-Trainer: -6
+  Hamburgerwender: 2
+  Schlosser: -6
