@@ -12,8 +12,11 @@ ImpossibleStartLocation:
   Muldraugh: 5
   Westpoint: 2
 EasyMission: [Überlebe einen Monat., Baue eine Standard-Base mit Strom- und Wasserversorgung., Töte 1000 Zombies]
-HardMission: [Erreiche bei 2 Fähigkeiten Stufe 10]
+HardMission: [Erreiche bei 2 Fähigkeiten Stufe 10, Töte 30.000 Zombies]
 ImpossibleMission: [Erreiche bei 5 Fähigkeiten Stufe 10, Säubere alle 4 Standard-Start-Städte, Töte 100.000 Zombies]
+EasySettings: [Apokalypse | Respawn aus | Mehrfachtreffer ein]
+HardSettings: [Apokalypse | Respawn ein | Mehrfachtreffer aus]
+ImpossibleSettings: [Apokalypse | Respawn ein | Mehrfachtreffer aus]
 MinTraits:
   Easy: 1
   Hard: 3
@@ -180,7 +183,7 @@ Agoraphobisch: [Klaustrophobisch, Mutig, Adrenalinjunkie]
 Klaustrophobisch: [Agoraphobisch, Mutig, Adrenalinjunkie]
 Untergewichtig: [Übergewichtig, Fettleibig]
 Übergewichtig: [Untergewichtig, Fettleibig]
-Fettleibig: [Untergewichtig, Übergewichtig]
+Fettleibig: [Untergewichtig, Übergewichtig, Appetitlosigkeit]
 Außer Form: [Couch-Kartoffel, Fit, Athletisch]
 Couch-Kartoffel: [Außer Form, Fit, Athletisch]
 Gebrechlich: [Schwach, Stämmig, Stark]
@@ -198,7 +201,7 @@ Darm aus Stahl: [Magenleiden]
 Magenleiden: [Darm aus Stahl]
 Anmutig: [Tollpatschig]
 Tollpatschig: [Anmutig]
-Appetitlosigkeit: [Gesunder Appetit]
+Appetitlosigkeit: [Gesunder Appetit, Fettleibig]
 Gesunder Appetit: [Appetitlosigkeit]
 Glückspilz: [Pechvogel]
 Pechvogel: [Glückspilz]
