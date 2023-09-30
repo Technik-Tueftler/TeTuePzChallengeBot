@@ -6,8 +6,6 @@ Main functions for discord bot and general implementations for challenge generat
 import os
 import asyncio
 import discord
-from discord.ext import commands
-from discord_slash import SlashCommand
 from source.game_settings import (
     config,
     User,
@@ -18,6 +16,7 @@ from source.game_settings import (
     get_end_trait_value,
 )
 from source.custom_challenge import create_custom_challenge
+from source.stream_challenge import stream_challenge_stage_one
 from source.picture import create_challenge_picture
 from source.constants import (
     OFFSET_TRAIT_VALUE,
@@ -117,6 +116,34 @@ class CustomChallenge(discord.ui.View):
         self.stop()
 
 
+class StreamChallengeStageOne(discord.ui.View):
+    def __init__(self, user, timeout=180):
+        super().__init__(timeout=timeout)
+        self.user_id = user.user_id
+        self.response = None
+
+    async def on_timeout(self):
+        self.children[0].disabled = True
+        self.clear_items()
+
+    @discord.ui.select(
+        placeholder="What difficulty should the challenge have?",
+        options=stream_challenge_stage_one(),
+        min_values=0,
+        max_values=15,
+    )
+    async def select_difficulty_level(
+        self, interaction: discord.Interaction, select_item: discord.ui.Select
+    ) -> None:
+        if interaction.user.id != self.user_id:
+            return
+        self.response = select_item.values
+        self.children[0].disabled = True
+        await interaction.message.edit(view=self)
+        await interaction.response.defer()
+        self.stop()
+
+
 @client.event
 async def on_ready() -> None:
     """
@@ -137,7 +164,8 @@ async def on_message(message) -> None:
     print(message.content)
     if message.author == client.user:
         return
-    if message.content.startswith("!Challenge"):
+    clean_message = message.content.lower()
+    if clean_message.startswith("!challenge"):
         if message.channel.name != CHANNEL_CUSTOM_CHALLENGE_NAME:
             return
         user = User(
@@ -167,6 +195,19 @@ async def on_message(message) -> None:
                     f"{user.user_display_name}, es ist ein Fehler aufgetreten. Bitte erstelle "
                     f"nochmal eine Challenge. Ein Fehler-Report ist gespeichert."
                 )
+    # if clean_message.startswith("!streamchallenge"):
+    #     if message.channel.name != CHANNEL_CUSTOM_CHALLENGE_NAME:
+    #         return
+    #     user = User(
+    #         user_id=message.author.id,
+    #         user_name=message.author.name,
+    #         user_display_name=message.author.global_name,
+    #     )
+    #     view = StreamChallengeStageOne(user=user)
+    #     await message.channel.send(view=view)
+    #     await view.wait()
+    #     result = view.response
+    #     print(result)
 
 
 def main() -> None:
