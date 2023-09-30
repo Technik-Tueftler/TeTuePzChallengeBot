@@ -4,156 +4,62 @@
 Main functions for discord bot and general implementations for challenge generator.
 """
 import os
-import random
 import asyncio
-import uuid
-from datetime import datetime
-from collections import namedtuple
-import yaml
 import discord
-from PIL import Image, ImageFont, ImageDraw
-from source.constants import CONFIGURATION_FILE, GENERIC_IMAGE_PATH
+from source.game_settings import (
+    config,
+    User,
+    get_location,
+    get_profession,
+    get_mission,
+    get_settings,
+    get_end_trait_value,
+)
+from source.custom_challenge import create_custom_challenge
+from source.stream_challenge import stream_challenge_stage_one
+from source.picture import create_challenge_picture
+from source.constants import (
+    OFFSET_TRAIT_VALUE,
+    TRAIT_DIFFERENCE_THR,
+)
 
 intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
 
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-CHANNEL_CUSTOM_CHALLENGE_NAME = os.getenv("CHANNEL_CUSTOM_CHALLENGE_NAME")
-
-with open(CONFIGURATION_FILE, encoding="utf-8") as f:
-    config = yaml.safe_load(f)
-
-LIST_OF_POSITIVE_TRAITS = list(config["PositivePropertiesValue"].keys())
-LIST_OF_NEGATIVE_TRAITS = list(config["NegativePropertiesValue"].keys())
-
-# Jobs are not included. Unemployed is always taken first, -8 Points.
-FINISH_POINTS_FOR_EASY = 0
-FINISH_POINTS_FOR_HARD = 5
-FINISH_POINTS_FOR_IMPOSSIBLE = 10
-
-TOTAL_NUMBER_OF_POSITIVE_TRAITS_EASY = 3
-TOTAL_NUMBER_OF_POSITIVE_TRAITS_HARD = 2
-TOTAL_NUMBER_OF_POSITIVE_TRAITS_IMPOSSIBLE = 1
-
-substitution_dictionary = {
-    ord("Ü"): "Ue",
-    ord("Ä"): "Ae",
-    ord("Ö"): "Oe",
-    ord("ü"): "ue",
-    ord("ä"): "ae",
-    ord("ö"): "oe",
-}
-
-User = namedtuple("User", ["user_id", "user_name", "user_display_name"])
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN", None)
+CHANNEL_CUSTOM_CHALLENGE_NAME = os.getenv("CHANNEL_CUSTOM_CHALLENGE_NAME", None)
 
 
-async def create_challenge_picture(game_settings: dict, user: User) -> str:
-    """
-    Function to create the pictures with the challenge based on game settings.
-    :param game_settings: Game settings with map, traits and mission.
-    :param user: User information
-    :return: picture name and path
-    """
-    img = Image.open(GENERIC_IMAGE_PATH)
-    draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype("../files/CrotahFreeVersionItalic-z8Ev3.ttf", 25)
-    color = (255, 255, 255)
-    # Ersteller
-    pos = (10, 10)
-    zeitstempel = datetime.now().strftime("%Y-%m-%d")
-    text = (f"Einfache Challenge, {user.user_display_name.translate(substitution_dictionary)}, "
-            f"{zeitstempel}")
-    draw.text(pos, text, fill=color, font=font)
-    # Location
-    location = game_settings["location"]
-    pos = (10, 100)
-    text = f"Starte in: {location} als Arbeitsloser"
-    draw.text(pos, text, fill=color, font=font)
-    # Traits
-    text = "Mit den positiven Traits:"
-    pos = (10, 140)
-    draw.text(pos, text, fill=color, font=font)
-    pos_x = 350
-    pos_y = 140
-    for element in game_settings["positive_traits"]:
-        pos = (pos_x, pos_y)
-        draw.text(
-            pos, element.translate(substitution_dictionary), fill=color, font=font
-        )
-        pos_y += 20
-    # Mission
-    mission = game_settings["mission"]
-    pos = (10, pos_y + 50)
-    draw.text(
-        pos,
-        f"Deine Mission: {mission.translate(substitution_dictionary)}",
-        fill=color,
-        font=font,
-    )
-    # Bildname und Pfad
-    bildname_und_pfad = (
-        "../created_challenges/"
-        + zeitstempel
-        + "_"
-        + user.user_display_name.translate(substitution_dictionary).replace(" ", "")
-        + "_"
-        + str(uuid.uuid4()).replace("-", "")
-        + ".png"
-    )
-    img.save(bildname_und_pfad)
-    return bildname_und_pfad
-
-
-async def create_custom_challenge(difficulty: str) -> dict:
+async def custom_challenge_handler(difficulty: str) -> dict:
     """
     Create a custom challenge for requester based on selected difficulty.
     :param difficulty: level of difficulty
     :return: game settings for challenge
     """
     game_settings = {
+        "successful_generated": True,
         "location": None,
+        "profession": None,
+        "difficulty": difficulty,
         "negative_traits": [],
         "positive_traits": [],
         "mission": None,
+        "min_traits": config["MinTraits"][difficulty],
+        "settings": None,
+        "trait_difference_thr": TRAIT_DIFFERENCE_THR,
     }
-    start_trait_value = 8
-    if difficulty == "Easy":
-        start_location = random.choice(list(config["EasyStartLocation"].keys()))
-        game_settings["location"] = start_location
-        start_trait_value += config["EasyStartLocation"][start_location]
-        game_settings["mission"] = random.choice(config["EasyMission"])
-        time_out = 25
-        while start_trait_value != 0:
-            positive_trait = random.choice(LIST_OF_POSITIVE_TRAITS)
-            if positive_trait in game_settings["positive_traits"]:
-                continue
-            if (
-                start_trait_value + config["PositivePropertiesValue"][positive_trait]
-            ) >= 0:
-                start_trait_value += config["PositivePropertiesValue"][positive_trait]
-                game_settings["positive_traits"].append(positive_trait)
-            time_out -= 1
-            if positive_trait == 0:
-                break
-            if time_out == 0:
-                if start_trait_value == 1:
-                    game_settings["positive_traits"].append("Geschwindigkeitsdämon")
-                    break
-                if start_trait_value == 2:
-                    game_settings["positive_traits"].append("Gewandt")
-                    break
-                if start_trait_value == 3:
-                    game_settings["positive_traits"].append("Geschwindigkeitsdämon")
-                    game_settings["positive_traits"].append("Gewandt")
-                    break
-                print(f"Fehler bei {game_settings} mit Endwert: {start_trait_value}")
-                break
-    elif difficulty == "Hard":
-        ...
-    elif difficulty == "Impossible":
-        ...
+    game_settings["location"], location_value = get_location(difficulty)
+    game_settings["profession"], profession_value = get_profession(difficulty)
+    game_settings["mission"], _ = get_mission(difficulty)
+    game_settings["settings"] = get_settings(difficulty)
+    # print(game_settings)
+    trait_value = profession_value
+    end_trait_value = (
+        get_end_trait_value(difficulty) + location_value + OFFSET_TRAIT_VALUE
+    )
+    await create_custom_challenge(trait_value, end_trait_value, game_settings)
     return game_settings
 
 
@@ -162,6 +68,7 @@ class CustomChallenge(discord.ui.View):
     Class to create dropdown menu for selecting the difficulty level of the
     custom challenge.
     """
+
     def __init__(self, user, timeout=180):
         super().__init__(timeout=timeout)
         self.user_id = user.user_id
@@ -209,6 +116,34 @@ class CustomChallenge(discord.ui.View):
         self.stop()
 
 
+class StreamChallengeStageOne(discord.ui.View):
+    def __init__(self, user, timeout=180):
+        super().__init__(timeout=timeout)
+        self.user_id = user.user_id
+        self.response = None
+
+    async def on_timeout(self):
+        self.children[0].disabled = True
+        self.clear_items()
+
+    @discord.ui.select(
+        placeholder="What difficulty should the challenge have?",
+        options=stream_challenge_stage_one(),
+        min_values=0,
+        max_values=15,
+    )
+    async def select_difficulty_level(
+        self, interaction: discord.Interaction, select_item: discord.ui.Select
+    ) -> None:
+        if interaction.user.id != self.user_id:
+            return
+        self.response = select_item.values
+        self.children[0].disabled = True
+        await interaction.message.edit(view=self)
+        await interaction.response.defer()
+        self.stop()
+
+
 @client.event
 async def on_ready() -> None:
     """
@@ -225,10 +160,12 @@ async def on_message(message) -> None:
     :param message: Message object
     :return: None
     """
-    print(message)
+    # print(message)
+    # print(message.content)
     if message.author == client.user:
         return
-    if message.content.startswith("!Challenge"):
+    clean_message = message.content.lower()
+    if clean_message.startswith("!challenge"):
         if message.channel.name != CHANNEL_CUSTOM_CHALLENGE_NAME:
             return
         user = User(
@@ -241,21 +178,36 @@ async def on_message(message) -> None:
         await view.wait()
         result = view.response
         if result is not None:
-            if result[0] in ("Hard", "Impossible"):
-                await message.channel.send(f"Es tut mir leid, den Schwierigkeitsgrad {result[0]} "
-                                           f"kann ich noch nicht ausgeben.")
-            else:
-                task_create_custom_challenge = asyncio.create_task(
-                    create_custom_challenge(result[0])
-                )
-                return_value = await task_create_custom_challenge
-                picture_path = await create_challenge_picture(return_value, user)
+            task_create_custom_challenge = asyncio.create_task(
+                custom_challenge_handler(result[0])
+            )
+            game_settings = await task_create_custom_challenge
+            if game_settings["successful_generated"]:
+                picture_path = await create_challenge_picture(game_settings, user)
                 with open(picture_path, "rb") as file:
                     image = discord.File(file)
                     await message.channel.send(
                         f"{user.user_display_name} das ist deine Challenge:"
                     )
                     await message.channel.send(file=image)
+            else:
+                await message.channel.send(
+                    f"{user.user_display_name}, es ist ein Fehler aufgetreten. Bitte erstelle "
+                    f"nochmal eine Challenge. Ein Fehler-Report ist gespeichert."
+                )
+    # if clean_message.startswith("!streamchallenge"):
+    #     if message.channel.name != CHANNEL_CUSTOM_CHALLENGE_NAME:
+    #         return
+    #     user = User(
+    #         user_id=message.author.id,
+    #         user_name=message.author.name,
+    #         user_display_name=message.author.global_name,
+    #     )
+    #     view = StreamChallengeStageOne(user=user)
+    #     await message.channel.send(view=view)
+    #     await view.wait()
+    #     result = view.response
+    #     print(result)
 
 
 def main() -> None:
