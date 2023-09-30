@@ -54,7 +54,7 @@ async def custom_challenge_handler(difficulty: str) -> dict:
     game_settings["profession"], profession_value = get_profession(difficulty)
     game_settings["mission"], _ = get_mission(difficulty)
     game_settings["settings"] = get_settings(difficulty)
-    print(game_settings)
+    # print(game_settings)
     trait_value = profession_value
     end_trait_value = (
         get_end_trait_value(difficulty) + location_value + OFFSET_TRAIT_VALUE
@@ -160,8 +160,8 @@ async def on_message(message) -> None:
     :param message: Message object
     :return: None
     """
-    print(message)
-    print(message.content)
+    # print(message)
+    # print(message.content)
     if message.author == client.user:
         return
     clean_message = message.content.lower()

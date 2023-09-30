@@ -25,38 +25,38 @@ NegativePropertiesValueSubstitute:
   Sonntagsfahrer: 1
   Feige: 2
 NegativePropertiesValue:
-  Kurzsichtig: 2 #
-  Langsam-Leser: 2 #
-  Schusslig: 2 #
-  Tollpatschig: 2 #
-  Magenleiden: 3 #
-  Agoraphobisch: 4 #
-  Auffällig: 4 #
-  Gesunder Appetit: 4 #
-  Klaustrophobisch: 4 #
-  Messie: 4 #
-  Pazifist: 4 #
-  Pechvogel: 4 #
-  Raucher: 4 #
-  Schlafmütze: 4 #
-  Schwaches Immunsystem: 4 #
-  Schwerhörig: 4 #
-  Asthmatiker: 5 #
-  Hämatophobie: 5 #
-  Außer Form: 6 #
-  Durstig: 6 #
-  Gebrechlich: 6 #
-  Langsam-Heiler: 6 #
-  Langsam-Lerner: 6 #
-  Schlaf-gestört: 6 #
-  Untergewichtig: 6 #
-  Übergewichtig: 6 #
-  Analphabet: 8 #
+  Kurzsichtig: 2
+  Langsam-Leser: 2
+  Schusslig: 2
+  Tollpatschig: 2
+  Magenleiden: 3
+  Agoraphobisch: 4
+  Auffällig: 4
+  Gesunder Appetit: 4
+  Klaustrophobisch: 4
+  Messie: 4
+  Pazifist: 4
+  Pechvogel: 4
+  Raucher: 4
+  Schlafmütze: 4
+  Schwaches Immunsystem: 4
+  Schwerhörig: 4
+  Asthmatiker: 5
+  Hämatophobie: 5
+  Außer Form: 6
+  Durstig: 6
+  Gebrechlich: 6
+  Langsam-Heiler: 6
+  Langsam-Lerner: 6
+  Schlaf-gestört: 6
+  Untergewichtig: 6
+  Übergewichtig: 6
+  Analphabet: 8
   Dünnhäutig: 8
-  Couch-Kartoffel: 10 #
-  Fettleibig: 10 #
-  Schwach: 10 #
-  Taub: 12 #
+  Couch-Kartoffel: 10
+  Fettleibig: 10
+  Schwach: 10
+  Taub: 12
 NegativePropertiesDescription:
   Sonntagsfahrer: Der langsame Fahrer.
   Feige: Besonders anfällig für Panikattacken.
