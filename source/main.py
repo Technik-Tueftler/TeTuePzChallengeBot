@@ -15,8 +15,9 @@ from source.game_settings import (
     get_settings,
     get_end_trait_value,
 )
+from source.game_settings import config, stream_challenge_config
 from source.custom_challenge import create_custom_challenge
-from source.stream_challenge import stream_challenge_stage_one
+from source.stream_challenge import stream_challenge_stage, stream_challenge_location, negative_trait_one
 from source.picture import create_challenge_picture
 from source.constants import (
     OFFSET_TRAIT_VALUE,
@@ -116,33 +117,51 @@ class CustomChallenge(discord.ui.View):
         self.stop()
 
 
-class StreamChallengeStageOne(discord.ui.View):
-    def __init__(self, user, timeout=180):
-        super().__init__(timeout=timeout)
-        self.user_id = user.user_id
-        self.response = None
+class NegativeTraitOne(discord.ui.Select):
+    def __init__(self, game_settings: dict):
+        super().__init__(
+            options=negative_trait_one(game_settings),
+            placeholder="Select the 1st negative traits",
+            min_values=1,
+            max_values=15,
+        )
 
-    async def on_timeout(self):
-        self.children[0].disabled = True
-        self.clear_items()
+    async def callback(self, interaction: discord.Interaction):
+        await self.view.respond_to_option_one(interaction, self.values)
+
+
+class StreamChallengeStage(discord.ui.View):
+    game_settings = {"challenge_points": stream_challenge_config["TotalPoints"],
+                     "start_location": None,
+                     "negative_trait_1": None,
+                     "negative_trait_2": None,
+                     "negative_trait_3": None,
+                     "prohibitions": None,
+                     "Mission": None}
 
     @discord.ui.select(
-        placeholder="What difficulty should the challenge have?",
-        options=stream_challenge_stage_one(),
-        min_values=0,
-        max_values=15,
+        placeholder="Select the starting area",
+        options=stream_challenge_location(),
+        min_values=1,
+        max_values=1,
     )
-    async def select_difficulty_level(
+    async def select_starting_area(
         self, interaction: discord.Interaction, select_item: discord.ui.Select
     ) -> None:
-        if interaction.user.id != self.user_id:
-            return
-        self.response = select_item.values
+        self.game_settings["start_location"] = select_item.values[0]
+        self.game_settings["challenge_points"] -= stream_challenge_config["StartingArea"][self.game_settings["start_location"]]
         self.children[0].disabled = True
+        call_option_one = NegativeTraitOne(self.game_settings)
+        self.add_item(call_option_one)
+        await interaction.message.edit(view=self)
+        await interaction.response.defer()
+
+    async def respond_to_option_one(self, interaction: discord.Interaction, choices):
+        self.game_settings["negative_trait_1"] = choices
+        self.children[1].disabled = True
         await interaction.message.edit(view=self)
         await interaction.response.defer()
         self.stop()
-
 
 @client.event
 async def on_ready() -> None:
@@ -195,19 +214,19 @@ async def on_message(message) -> None:
                     f"{user.user_display_name}, es ist ein Fehler aufgetreten. Bitte erstelle "
                     f"nochmal eine Challenge. Ein Fehler-Report ist gespeichert."
                 )
-    # if clean_message.startswith("!streamchallenge"):
-    #     if message.channel.name != CHANNEL_CUSTOM_CHALLENGE_NAME:
-    #         return
-    #     user = User(
-    #         user_id=message.author.id,
-    #         user_name=message.author.name,
-    #         user_display_name=message.author.global_name,
-    #     )
-    #     view = StreamChallengeStageOne(user=user)
-    #     await message.channel.send(view=view)
-    #     await view.wait()
-    #     result = view.response
-    #     print(result)
+    if clean_message.startswith("!streamchallenge"):
+        if message.channel.name != CHANNEL_CUSTOM_CHALLENGE_NAME:
+            return
+        user = User(
+            user_id=message.author.id,
+            user_name=message.author.name,
+            user_display_name=message.author.global_name,
+        )
+        view = StreamChallengeStage()
+        await message.channel.send(view=view)
+        await view.wait()
+        result = view.game_settings
+        print(result)
 
 
 def main() -> None:

@@ -3,10 +3,13 @@
 import random
 import yaml
 from collections import namedtuple
-from source.constants import CONFIGURATION_FILE
+from source.constants import CONFIGURATION_FILE, CONFI_STREAM_CHALLENGE_FILE
 
 with open(CONFIGURATION_FILE, encoding="utf-8") as f:
     config = yaml.safe_load(f)
+
+with open(CONFI_STREAM_CHALLENGE_FILE, encoding="utf-8") as f:
+    stream_challenge_config = yaml.safe_load(f)
 
 LIST_OF_POSITIVE_TRAITS = list(config["PositivePropertiesValue"].keys())
 LIST_OF_NEGATIVE_TRAITS = list(config["NegativePropertiesValue"].keys())

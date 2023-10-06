@@ -2,6 +2,7 @@
 File contains all constants for easy central import and usage.
 """
 CONFIGURATION_FILE = "../files/config.yml"
+CONFI_STREAM_CHALLENGE_FILE = "../files/stream_challenge.yml"
 GENERIC_IMAGE_PATH = "../files/"
 OFFSET_TRAIT_VALUE = 0
 END_THR_TRAIT_VALUE = 3

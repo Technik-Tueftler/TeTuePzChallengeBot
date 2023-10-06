@@ -1,0 +1,15 @@
+TotalPoints: 29
+StartingArea:
+  Rosewood: 0
+  Riverside: 1
+  Muldraugh: 4
+  Westpoint: 8
+  Random Casual Start: 5
+  Louisville – Audubon: 12
+  Louisville – Evergreen Hill: 12
+  Louisville – Old Louisville: 18
+  Louisville – Phoenix Hill: 18
+  Louisville – Central: 20
+NegativePropertiesValueOptionOne: [Nichts auswählen, Langsam-Leser, Tollpatschig, Magenleiden, Agoraphobisch, Gesunder Appetit, Pechvogel, Schwaches Immunsystem, Feige, Schwerhörig, Hämatophobie, Außer Form, Langsam-Lerner, Schlaf-gestört, Untergewichtig]
+NegativePropertiesValueOptionTwo: [Nichts auswählen, Analphabet, Klaustrophobisch, Taub, Couch-Kartoffel, Schwach, Messie, Übergewichtig,Schusslig, Pazifist, Asthmatiker, Sonntagsfahrer]
+NegativePropertiesValueOptionThree: [Nichts auswählen, Durstig, Langsam-Heiler, Fettleibig, Dünnhäutig, Raucher, Gebrechlich, Schlafmütze, Auffällig]
