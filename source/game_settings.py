@@ -83,6 +83,18 @@ def get_end_trait_value(difficulty: str) -> int:
     return config["EndTraitValue"][difficulty]
 
 
+def total_sum_of_neg_traits(traits: list) -> int:
+    trait_sum = 0
+    for element in traits:
+        if element in config["NegativePropertiesValueSubstitute"]:
+            trait_sum += config["NegativePropertiesValueSubstitute"][element]
+        elif element in config["NegativePropertiesValue"]:
+            trait_sum += config["NegativePropertiesValue"][element]
+        else:
+            print(f"Fehler bei trait: {element}")
+    return trait_sum
+
+
 def main() -> None:
     pass
 

@@ -15,9 +15,19 @@ from source.game_settings import (
     get_settings,
     get_end_trait_value,
 )
-from source.game_settings import config, stream_challenge_config
+from source.game_settings import (
+    config,
+    stream_challenge_config,
+    total_sum_of_neg_traits,
+)
 from source.custom_challenge import create_custom_challenge
-from source.stream_challenge import stream_challenge_stage, stream_challenge_location, negative_trait_one
+from source.stream_challenge import (
+    stream_challenge_stage,
+    stream_challenge_location,
+    negative_trait_one,
+    negative_trait_two,
+    negative_trait_three,
+)
 from source.picture import create_challenge_picture
 from source.constants import (
     OFFSET_TRAIT_VALUE,
@@ -31,6 +41,18 @@ client = discord.Client(intents=intents)
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN", None)
 CHANNEL_CUSTOM_CHALLENGE_NAME = os.getenv("CHANNEL_CUSTOM_CHALLENGE_NAME", None)
+
+
+async def failed_choice_explanation_option_one(
+    challenge_settings: dict, interaction: discord.Interaction
+) -> None:
+    trait_points = abs(challenge_settings["challenge_points"])
+    info_text = (
+        f"Du hast die maximale Anzahl an Eigenschaftspunkten um {trait_points} Punkten "
+        f"überschritten. Bitte starte mit dem Befehl neu und wähle weniger Eigenschaften "
+        f"aus oder lass die Challenge in einer anderen Stadt mit weniger Punkten starten."
+    )
+    await interaction.message.channel.send(info_text)
 
 
 async def custom_challenge_handler(difficulty: str) -> dict:
@@ -117,13 +139,42 @@ class CustomChallenge(discord.ui.View):
         self.stop()
 
 
+class NegativeTraitThree(discord.ui.Select):
+    def __init__(self, game_settings: dict):
+        trait_options = negative_trait_three(game_settings)
+        super().__init__(
+            options=trait_options,
+            placeholder="Select the 3rd negative traits",
+            min_values=1,
+            max_values=len(trait_options),
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        await self.view.respond_to_option_three(interaction, self.values)
+
+
+class NegativeTraitTwo(discord.ui.Select):
+    def __init__(self, game_settings: dict):
+        trait_options = negative_trait_two(game_settings)
+        super().__init__(
+            options=trait_options,
+            placeholder="Select the 2nd negative traits",
+            min_values=1,
+            max_values=len(trait_options),
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        await self.view.respond_to_option_two(interaction, self.values)
+
+
 class NegativeTraitOne(discord.ui.Select):
     def __init__(self, game_settings: dict):
+        trait_options = negative_trait_one(game_settings)
         super().__init__(
-            options=negative_trait_one(game_settings),
+            options=trait_options,
             placeholder="Select the 1st negative traits",
             min_values=1,
-            max_values=15,
+            max_values=len(trait_options),
         )
 
     async def callback(self, interaction: discord.Interaction):
@@ -131,25 +182,36 @@ class NegativeTraitOne(discord.ui.Select):
 
 
 class StreamChallengeStage(discord.ui.View):
-    game_settings = {"challenge_points": stream_challenge_config["TotalPoints"],
-                     "start_location": None,
-                     "negative_trait_1": None,
-                     "negative_trait_2": None,
-                     "negative_trait_3": None,
-                     "prohibitions": None,
-                     "Mission": None}
+    game_settings = {
+            "challenge_points": stream_challenge_config["TotalPoints"],
+            "start_location": None,
+            "negative_trait_1": None,
+            "negative_trait_2": None,
+            "negative_trait_3": None,
+            "prohibitions": None,
+            "mission": None,
+            "choices_valid": False,
+        }
+    options = stream_challenge_location()
 
     @discord.ui.select(
         placeholder="Select the starting area",
-        options=stream_challenge_location(),
+        options=options,
+        # options=[discord.SelectOption(label="Test",description=f"Points weighting"),
+        #          discord.SelectOption(label="Test2",description=f"Points weighting"),
+        #         ],
         min_values=1,
         max_values=1,
     )
     async def select_starting_area(
         self, interaction: discord.Interaction, select_item: discord.ui.Select
     ) -> None:
+        print(self.game_settings)
         self.game_settings["start_location"] = select_item.values[0]
-        self.game_settings["challenge_points"] -= stream_challenge_config["StartingArea"][self.game_settings["start_location"]]
+        # self.game_settings["start_location"] = "Louisville – Audubon"
+        self.game_settings["challenge_points"] -= stream_challenge_config[
+            "StartingArea"
+        ][self.game_settings["start_location"]]
         self.children[0].disabled = True
         call_option_one = NegativeTraitOne(self.game_settings)
         self.add_item(call_option_one)
@@ -157,11 +219,76 @@ class StreamChallengeStage(discord.ui.View):
         await interaction.response.defer()
 
     async def respond_to_option_one(self, interaction: discord.Interaction, choices):
+        # total_sum = total_sum_of_neg_traits(choices)
+        self.game_settings["challenge_points"] -= total_sum_of_neg_traits(choices)
         self.game_settings["negative_trait_1"] = choices
-        self.children[1].disabled = True
+        # if total_sum <= self.game_settings["challenge_points"]:
+        if self.game_settings["challenge_points"] >= 0:
+            self.game_settings["choices_valid"] = True
+            self.children[1].disabled = True
+            call_option_two = NegativeTraitTwo(self.game_settings)
+            self.add_item(call_option_two)
+            await interaction.message.edit(view=self)
+            await interaction.response.defer()
+            #self.stop()
+
+        else:
+            await failed_choice_explanation_option_one(self.game_settings, interaction)
+            self.children[1].disabled = True
+            await interaction.message.edit(view=self)
+            await interaction.response.defer()
+            self.stop()
+
+    async def respond_to_option_two(self, interaction: discord.Interaction, choices):
+        self.game_settings["challenge_points"] -= total_sum_of_neg_traits(choices)
+        self.game_settings["negative_trait_2"] = choices
         await interaction.message.edit(view=self)
         await interaction.response.defer()
-        self.stop()
+        # self.stop()
+        if self.game_settings["challenge_points"] >= 0:
+            self.game_settings["choices_valid"] = True
+            self.children[2].disabled = True
+            call_option_three = NegativeTraitThree(self.game_settings)
+            self.add_item(call_option_three)
+            await interaction.message.edit(view=self)
+            #await interaction.response.defer()
+            #self.stop()
+        else:
+            await failed_choice_explanation_option_one(self.game_settings, interaction)
+            self.children[2].disabled = True
+            await interaction.message.edit(view=self)
+            #await interaction.response.defer()
+            self.stop()
+
+    async def respond_to_option_three(self, interaction: discord.Interaction, choices):
+        self.game_settings["challenge_points"] -= total_sum_of_neg_traits(choices)
+        self.game_settings["negative_trait_3"] = choices
+        await interaction.message.edit(view=self)
+        await interaction.response.defer()
+        # self.stop()
+        if self.game_settings["challenge_points"] >= 0:
+            self.game_settings["choices_valid"] = True
+            self.children[3].disabled = True
+            await interaction.message.edit(view=self)
+            # await interaction.response.defer()
+            self.stop()
+        else:
+            await failed_choice_explanation_option_one(self.game_settings, interaction)
+            self.children[3].disabled = True
+            await interaction.message.edit(view=self)
+            # await interaction.response.defer()
+            self.stop()
+
+    async def reset_settings(self):
+        self.game_settings["challenge_points"] = stream_challenge_config["TotalPoints"]
+        self.game_settings["start_location"] = None
+        self.game_settings["negative_trait_1"] = None
+        self.game_settings["negative_trait_2"] = None
+        self.game_settings["negative_trait_3"] = None
+        self.game_settings["prohibitions"] = None
+        self.game_settings["mission"] = None
+        self.game_settings["choices_valid"] = None
+
 
 @client.event
 async def on_ready() -> None:
@@ -169,6 +296,7 @@ async def on_ready() -> None:
     Function to be called when the bot is ready.
     :return: None
     """
+    # await client.tree.sync()
     print(f"We have logged in as {client.user}")
 
 
@@ -227,7 +355,17 @@ async def on_message(message) -> None:
         await view.wait()
         result = view.game_settings
         print(result)
+        await view.reset_settings()
+    # if clean_message.startswith("!test"):
+    #     view = SurveyView()
+    #     await message.channel.send(view=view)
+    #     await view.wait()
+    #     await message.channel.send(f"a1: {view.answer1}, a2: {view.answer2}, a3: {view.answer3}")
 
+
+# @client.tree.command(name="setcolor", description="Test command")
+# async def setcolor(interaction: discord.Interaction):
+#     await interaction.response.send_message(content="Select your color", view=SurveyView())
 
 def main() -> None:
     """
