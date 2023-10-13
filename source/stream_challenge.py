@@ -5,15 +5,13 @@ from source.game_settings import config, stream_challenge_config
 
 
 def stream_challenge_location() -> str:
-    test = [
+    return [
         discord.SelectOption(
             label=area,
             description=f"Points weighting: {value}",
         )
         for area, value in stream_challenge_config["StartingArea"].items()
     ]
-    print(test)
-    return test
 
 
 def negative_trait_three(game_settings: dict) -> list:
@@ -94,65 +92,6 @@ def negative_trait_one(game_settings: dict) -> list:
             )
     sorted_traits_option_one = sorted(traits_option_one, key=lambda x: x[0])
     return [element[1] for element in sorted_traits_option_one]
-
-
-def stream_challenge_stage(option: str):
-    option_one = [
-        "Nichts auswählen",
-        "Langsam-Leser",
-        "Tollpatschig",
-        "Magenleiden",
-        "Agoraphobisch",
-        "Gesunder Appetit",
-        "Pechvogel",
-        "Schwaches Immunsystem",
-        "Feige",
-        "Schwerhörig",
-        "Hämatophobie",
-        "Außer Form",
-        "Langsam-Lerner",
-        "Schlaf-gestört",
-        "Untergewichtig",
-    ]
-    option_two = []
-    option_three = [
-        "Nichts auswählen",
-        "Durstig",
-        "Langsam-Heiler",
-        "Fettleibig",
-        "Dünnhäutig",
-        "Raucher",
-        "Gebrechlich",
-        "Schlafmütze",
-        "Auffällig",
-    ]
-    cleaned_options = []
-    if option == "one":
-        for element in option_one:
-            if element == "Nichts auswählen":
-                description = "Keiner dieser Möglichkeiten und zum nächsten Schritt."
-            else:
-                description = config["NegativePropertiesDescription"][element]
-            cleaned_options.append(
-                discord.SelectOption(
-                    label=element,
-                    description=description,
-                )
-            )
-    elif option == "two":
-        for element in option_two:
-            if element == "Nichts auswählen":
-                description = "Keiner dieser Möglichkeiten und zum nächsten Schritt."
-            else:
-                description = config["NegativePropertiesDescription"][element]
-            cleaned_options.append(
-                discord.SelectOption(
-                    label=element,
-                    description=description,
-                )
-            )
-
-    return cleaned_options
 
 
 def main() -> None:
