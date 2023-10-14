@@ -13,3 +13,11 @@ StartingArea:
 NegativePropertiesValueOptionOne: [Nichts auswählen, Langsam-Leser, Tollpatschig, Magenleiden, Agoraphobisch, Gesunder Appetit, Pechvogel, Schwaches Immunsystem, Feige, Schwerhörig, Hämatophobie, Außer Form, Langsam-Lerner, Schlaf-gestört, Untergewichtig]
 NegativePropertiesValueOptionTwo: [Nichts auswählen, Analphabet, Klaustrophobisch, Taub, Couch-Kartoffel, Schwach, Messie, Übergewichtig,Schusslig, Pazifist, Asthmatiker, Sonntagsfahrer]
 NegativePropertiesValueOptionThree: [Nichts auswählen, Durstig, Langsam-Heiler, Fettleibig, Dünnhäutig, Raucher, Gebrechlich, Schlafmütze, Auffällig]
+Mission:
+  Säubere die Start-Stadt von Zombies: 20
+  Überlebe einen Monat: 0
+  Töte 1000 Zombies: 2
+  Erreiche bei 2 Fähigkeiten Stufe 10: 10
+  Baue eine Standard-Base mit Strom- und Wasserversorgung: 5
+  Überlebe 6 Monate one Base: 8
+  Töte 30.000 Zombies: 15

@@ -3,7 +3,7 @@
 import random
 import yaml
 from collections import namedtuple
-from source.constants import CONFIGURATION_FILE, CONFI_STREAM_CHALLENGE_FILE
+from source.constants import CONFIGURATION_FILE, CONFI_STREAM_CHALLENGE_FILE, USER_INFO_MESSAGE_1, USER_INFO_MESSAGE_2
 
 with open(CONFIGURATION_FILE, encoding="utf-8") as f:
     config = yaml.safe_load(f)
@@ -93,6 +93,10 @@ def total_sum_of_neg_traits(traits: list) -> int:
         else:
             print(f"Fehler bei trait: {element}")
     return trait_sum
+
+
+def send_user_info_message_with_points(points: int) -> str:
+    return USER_INFO_MESSAGE_1 + str(points) + USER_INFO_MESSAGE_2
 
 
 def main() -> None:

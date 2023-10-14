@@ -14,6 +14,7 @@ from source.game_settings import (
     get_mission,
     get_settings,
     get_end_trait_value,
+    send_user_info_message_with_points
 )
 from source.game_settings import (
     config,
@@ -26,6 +27,8 @@ from source.stream_challenge import (
     negative_trait_one,
     negative_trait_two,
     negative_trait_three,
+    mission,
+    mission_value,
 )
 from source.picture import create_challenge_picture
 from source.constants import (
@@ -139,6 +142,20 @@ class CustomChallenge(discord.ui.View):
         self.stop()
 
 
+class MissionOption(discord.ui.Select):
+    def __init__(self, game_settings: dict):
+        mission_options = mission(game_settings)
+        super().__init__(
+            options=mission_options,
+            placeholder="Select the mission for the challenge",
+            min_values=1,
+            max_values=len(mission_options),
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        await self.view.respond_to_mission_option(interaction, self.values)
+
+
 class NegativeTraitThree(discord.ui.Select):
     def __init__(self, game_settings: dict):
         trait_options = negative_trait_three(game_settings)
@@ -211,8 +228,6 @@ class StreamChallengeStage(discord.ui.View):
     async def select_starting_area(
         self, interaction: discord.Interaction, select_item: discord.ui.Select
     ) -> None:
-        # print(f"Interaction: {interaction.user.id}")
-        # print(f"Saved: {self.user_id}")
         if interaction.user.id != self.user_id:
             return
         self.game_settings["start_location"] = select_item.values[0]
@@ -220,36 +235,31 @@ class StreamChallengeStage(discord.ui.View):
             "StartingArea"
         ][self.game_settings["start_location"]]
         self.children[0].disabled = True
-        total_points = self.game_settings["challenge_points"]
-        await self.info_message.edit(content=f"Deine Punkte, die du vergeben kannst beträgt: {total_points}")
+        user_message = send_user_info_message_with_points(
+            self.game_settings["challenge_points"])
+        await self.info_message.edit(content=user_message)
         call_option_one = NegativeTraitOne(self.game_settings)
         self.add_item(call_option_one)
         await interaction.message.edit(view=self)
         await interaction.response.defer()
 
     async def respond_to_option_one(self, interaction: discord.Interaction, choices):
-        # total_sum = total_sum_of_neg_traits(choices)
         if interaction.user.id != self.user_id:
             return
         self.game_settings["challenge_points"] -= total_sum_of_neg_traits(choices)
         self.game_settings["negative_trait_1"] = choices
-        # if total_sum <= self.game_settings["challenge_points"]:
+        self.children[1].disabled = True
         if self.game_settings["challenge_points"] >= 0:
             self.game_settings["choices_valid"] = True
-            self.children[1].disabled = True
-            total_points = self.game_settings["challenge_points"]
-            await self.info_message.edit(
-                content=f"Deine Punkte, die du vergeben kannst beträgt: {total_points}")
-
+            user_message = send_user_info_message_with_points(
+                self.game_settings["challenge_points"])
+            await self.info_message.edit(content=user_message)
             call_option_two = NegativeTraitTwo(self.game_settings)
             self.add_item(call_option_two)
             await interaction.message.edit(view=self)
             await interaction.response.defer()
-            #self.stop()
-
         else:
             await failed_choice_explanation_option_one(self.game_settings, interaction)
-            self.children[1].disabled = True
             await interaction.message.edit(view=self)
             await interaction.response.defer()
             self.stop()
@@ -261,14 +271,13 @@ class StreamChallengeStage(discord.ui.View):
         self.game_settings["negative_trait_2"] = choices
         await interaction.message.edit(view=self)
         await interaction.response.defer()
-        # self.stop()
+        self.children[2].disabled = True
         if self.game_settings["challenge_points"] >= 0:
             self.game_settings["choices_valid"] = True
-            self.children[2].disabled = True
-            total_points = self.game_settings["challenge_points"]
+            user_message = send_user_info_message_with_points(
+                self.game_settings["challenge_points"])
             await self.info_message.edit(
-                content=f"Deine Punkte, die du vergeben kannst beträgt: {total_points}")
-
+                content=user_message)
             call_option_three = NegativeTraitThree(self.game_settings)
             self.add_item(call_option_three)
             await interaction.message.edit(view=self)
@@ -276,7 +285,6 @@ class StreamChallengeStage(discord.ui.View):
             # self.stop()
         else:
             await failed_choice_explanation_option_one(self.game_settings, interaction)
-            self.children[2].disabled = True
             await interaction.message.edit(view=self)
             # await interaction.response.defer()
             self.stop()
@@ -288,16 +296,45 @@ class StreamChallengeStage(discord.ui.View):
         self.game_settings["negative_trait_3"] = choices
         await interaction.message.edit(view=self)
         await interaction.response.defer()
-        # self.stop()
+        self.children[3].disabled = True
         if self.game_settings["challenge_points"] >= 0:
             self.game_settings["choices_valid"] = True
-            self.children[3].disabled = True
+            user_message = send_user_info_message_with_points(
+                self.game_settings["challenge_points"])
+            await self.info_message.edit(
+                content=user_message)
+            call_option_mission = MissionOption(self.game_settings)
+            self.add_item(call_option_mission)
+
+            await interaction.message.edit(view=self)
+            # await interaction.response.defer()
+            # self.stop()
+        else:
+            await failed_choice_explanation_option_one(self.game_settings, interaction)
+            await interaction.message.edit(view=self)
+            # await interaction.response.defer()
+            self.stop()
+
+    async def respond_to_mission_option(self, interaction: discord.Interaction, choices):
+        if interaction.user.id != self.user_id:
+            return
+        self.game_settings["challenge_points"] -= mission_value(choices)
+        self.game_settings["mission"] = choices
+        await interaction.message.edit(view=self)
+        await interaction.response.defer()
+        # self.stop()
+        self.children[4].disabled = True
+        if self.game_settings["challenge_points"] >= 0:
+            self.game_settings["choices_valid"] = True
+            user_message = send_user_info_message_with_points(
+                self.game_settings["challenge_points"])
+            await self.info_message.edit(
+                content=user_message)
             await interaction.message.edit(view=self)
             # await interaction.response.defer()
             self.stop()
         else:
             await failed_choice_explanation_option_one(self.game_settings, interaction)
-            self.children[3].disabled = True
             await interaction.message.edit(view=self)
             # await interaction.response.defer()
             self.stop()
@@ -332,8 +369,8 @@ async def on_message(message) -> None:
     """
     # print(message)
     # print(message.content)
-    print(message.channel.name)
-    print(message.channel.id)
+    # print(message.channel.name)
+    # print(message.channel.id)
     if message.author == client.user:
         return
     clean_message = message.content.lower()
@@ -368,24 +405,22 @@ async def on_message(message) -> None:
                     f"nochmal eine Challenge. Ein Fehler-Report ist gespeichert."
                 )
     if clean_message.startswith("!streamchallenge"):
-        print(f"Channel ID: {message.channel.id} / {type(message.channel.id)}")
-        print(f"saved Channel ID: {CHANNEL_STREAM_CHALLENGE_ID} / {type(CHANNEL_STREAM_CHALLENGE_ID)}")
         if str(message.channel.id) != CHANNEL_STREAM_CHALLENGE_ID:
             return
-        print("Test")
         user = User(
             user_id=message.author.id,
             user_name=message.author.name,
             user_display_name=message.author.global_name,
         )
-        total_start_points = stream_challenge_config["TotalPoints"]
-        user_info_message = await message.channel.send(f"Deine Punkte, die du vergeben kannst beträgt: {total_start_points}")
+        user_message = send_user_info_message_with_points(stream_challenge_config["TotalPoints"])
+        user_info_message = await message.channel.send(user_message)
         view = StreamChallengeStage(user=user, info_message=user_info_message)
         await message.channel.send(view=view)
         await view.wait()
         result = view.game_settings
         print(result)
         await view.reset_settings()
+
 
 
 # @client.tree.command(name="setcolor", description="Test command")

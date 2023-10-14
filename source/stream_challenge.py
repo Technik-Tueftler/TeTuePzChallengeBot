@@ -14,6 +14,27 @@ def stream_challenge_location() -> str:
     ]
 
 
+def mission_value(selected_mission: list) -> int:
+    trait_sum = 0
+    for element in selected_mission:
+        trait_sum += stream_challenge_config["Mission"][element]
+    return trait_sum
+
+
+def mission(game_settings: dict) -> list:
+    challenge_points = game_settings["challenge_points"]
+    all_missions = stream_challenge_config["Mission"]
+    all_possible_missions = []
+    for key in all_missions:
+        mission_value = all_missions[key]
+        if mission_value <= challenge_points:
+            all_possible_missions.append([mission_value, discord.SelectOption(
+                label=key, description=f"Points weighting: {mission_value}"
+            )])
+    sorted_missions = sorted(all_possible_missions, key=lambda x: x[0])
+    return [element[1] for element in sorted_missions]
+
+
 def negative_trait_three(game_settings: dict) -> list:
     selected_neg_traits_one_two = game_settings["negative_trait_1"] + game_settings["negative_trait_2"]
     all_neg_traits_three = stream_challenge_config["NegativePropertiesValueOptionThree"]
