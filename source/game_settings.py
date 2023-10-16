@@ -3,7 +3,17 @@
 import random
 import yaml
 from collections import namedtuple
-from source.constants import CONFIGURATION_FILE, CONFI_STREAM_CHALLENGE_FILE, USER_INFO_MESSAGE_1, USER_INFO_MESSAGE_2
+from source.constants import (
+    CONFIGURATION_FILE,
+    CONFI_STREAM_CHALLENGE_FILE,
+    USER_INFO_MESSAGE_1,
+    USER_INFO_MESSAGE_2,
+    USER_INFO_MESSAGE_APPROVAL_1,
+    USER_INFO_MESSAGE_APPROVAL_2,
+    USER_INFO_MESSAGE_APPROVAL_3,
+    USER_INFO_MESSAGE_APPROVAL_4,
+    USER_INFO_MESSAGE_APPROVAL_5,
+)
 
 with open(CONFIGURATION_FILE, encoding="utf-8") as f:
     config = yaml.safe_load(f)
@@ -97,6 +107,30 @@ def total_sum_of_neg_traits(traits: list) -> int:
 
 def send_user_info_message_with_points(points: int) -> str:
     return USER_INFO_MESSAGE_1 + str(points) + USER_INFO_MESSAGE_2
+
+
+def send_user_info_message_for_approval(game_settings: dict) -> str:
+    negative_traits = (
+        game_settings["negative_trait_1"]
+        + game_settings["negative_trait_2"]
+        + game_settings["negative_trait_3"]
+    )
+    info_message = (
+        USER_INFO_MESSAGE_APPROVAL_1
+        + game_settings["start_location"]
+        + "\n"
+        + USER_INFO_MESSAGE_APPROVAL_2
+        + ", ".join(negative_traits)
+        + "\n"
+        + USER_INFO_MESSAGE_APPROVAL_3
+        + game_settings["mission"][0]
+        + "\n"
+        + USER_INFO_MESSAGE_APPROVAL_4
+        + str(game_settings["challenge_points"])
+        + "\n"
+        + USER_INFO_MESSAGE_APPROVAL_5
+    )
+    return info_message
 
 
 def main() -> None:
