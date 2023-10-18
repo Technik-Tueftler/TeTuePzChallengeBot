@@ -5,7 +5,7 @@ import random
 import uuid
 from datetime import datetime
 from PIL import Image, ImageFont, ImageDraw
-from source.game_settings import User, substitution_dictionary
+from source.game_settings import User, substitution_dictionary, write_config, config
 from source.constants import (
     GENERIC_IMAGE_PATH,
     MAX_CHARS_PRINT,
@@ -35,6 +35,30 @@ async def sort_text_for_print(text: str) -> list:
             temp_text = element
     return_strings.append(temp_text)
     return return_strings
+
+
+async def herr_apfelring(game_settings: dict, user: User) -> str:
+    """
+
+    :param game_settings:
+    :param user:
+    :return:
+    """
+    background_image = await get_background_image()
+    img = Image.open(background_image)
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype("../files/CrotahFreeVersionItalic-z8Ev3.ttf", 25)
+    color = (255, 255, 255)
+    x, y = 10, 10
+    zeitstempel = datetime.now().strftime("%Y-%m-%d")
+    challenge_id = config["challenge_id"] +1
+    write_config("challenge_id", challenge_id)
+    text = (
+        f"#{challenge_id} "
+        f"{user.user_display_name.translate(substitution_dictionary)}, "
+        f"{zeitstempel}"
+    )
+    draw.text((x, y), text, fill=color, font=font)
 
 
 async def create_challenge_picture(game_settings: dict, user: User) -> str:

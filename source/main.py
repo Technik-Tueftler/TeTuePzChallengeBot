@@ -6,8 +6,8 @@ Main functions for discord bot and general implementations for challenge generat
 import os
 import asyncio
 import discord
+from discord import app_commands
 
-# from discord.ext import commands
 from source.game_settings import (
     User,
     get_location,
@@ -18,7 +18,7 @@ from source.game_settings import (
     send_user_info_message_with_points,
 )
 from source.game_settings import (
-    config,
+    custom_config,
     stream_challenge_config,
     total_sum_of_neg_traits,
     send_user_info_message_for_approval,
@@ -32,7 +32,7 @@ from source.stream_challenge import (
     mission,
     mission_value,
 )
-from source.picture import create_challenge_picture
+from source.picture import create_challenge_picture, herr_apfelring
 from source.constants import (
     OFFSET_TRAIT_VALUE,
     TRAIT_DIFFERENCE_THR,
@@ -42,10 +42,14 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
+tree = app_commands.CommandTree(client)
 # client = commands.Bot(command_prefix="-", intents=discord.Intents.all())
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN", None)
 CHANNEL_CUSTOM_CHALLENGE_NAME = os.getenv("CHANNEL_CUSTOM_CHALLENGE_NAME", None)
+CHANNEL_CUSTOM_CHALLENGE_ID = os.getenv("CHANNEL_CUSTOM_CHALLENGE_ID", None)
 CHANNEL_STREAM_CHALLENGE_ID = os.getenv("CHANNEL_STREAM_CHALLENGE_ID", None)
+SERVER_ID = os.getenv("SERVER_ID", None)
+STREAM_CHALLENGE_CREATOR_ROLE_ID = os.getenv("STREAM_CHALLENGE_CREATOR_ROLE_ID", None)
 
 
 async def failed_choice_explanation_option_one(
@@ -74,7 +78,7 @@ async def custom_challenge_handler(difficulty: str) -> dict:
         "negative_traits": [],
         "positive_traits": [],
         "mission": None,
-        "min_traits": config["MinTraits"][difficulty],
+        "min_traits": custom_config["MinTraits"][difficulty],
         "settings": None,
         "trait_difference_thr": TRAIT_DIFFERENCE_THR,
     }
@@ -252,10 +256,10 @@ class StreamChallengeStage(discord.ui.View):
     }
     options = stream_challenge_location()
 
-    def __init__(self, user, info_message, timeout=300):
+    def __init__(self, user, interaction, timeout=300):
         super().__init__(timeout=timeout)
         self.user_id = user.user_id
-        self.info_message = info_message
+        self.start_interaction = interaction
 
     @discord.ui.select(
         placeholder="Select the starting area",
@@ -279,7 +283,7 @@ class StreamChallengeStage(discord.ui.View):
         user_message = send_user_info_message_with_points(
             self.game_settings["challenge_points"]
         )
-        await self.info_message.edit(content=user_message)
+        await self.start_interaction.edit_original_response(content=user_message)
         call_option_one = NegativeTraitOne(self.game_settings)
         self.add_item(call_option_one)
         await interaction.message.edit(view=self)
@@ -296,7 +300,7 @@ class StreamChallengeStage(discord.ui.View):
             user_message = send_user_info_message_with_points(
                 self.game_settings["challenge_points"]
             )
-            await self.info_message.edit(content=user_message)
+            await self.start_interaction.edit_original_response(content=user_message)
             call_option_two = NegativeTraitTwo(self.game_settings)
             self.add_item(call_option_two)
             await interaction.message.edit(view=self)
@@ -320,7 +324,7 @@ class StreamChallengeStage(discord.ui.View):
             user_message = send_user_info_message_with_points(
                 self.game_settings["challenge_points"]
             )
-            await self.info_message.edit(content=user_message)
+            await self.start_interaction.edit_original_response(content=user_message)
             call_option_three = NegativeTraitThree(self.game_settings)
             self.add_item(call_option_three)
             await interaction.message.edit(view=self)
@@ -342,7 +346,7 @@ class StreamChallengeStage(discord.ui.View):
             user_message = send_user_info_message_with_points(
                 self.game_settings["challenge_points"]
             )
-            await self.info_message.edit(content=user_message)
+            await self.start_interaction.edit_original_response(content=user_message)
             call_option_mission = MissionOption(self.game_settings)
             # call_option_mission = SteamChallengeApproval()
             self.add_item(call_option_mission)
@@ -388,8 +392,81 @@ async def on_ready() -> None:
     Function to be called when the bot is ready.
     :return: None
     """
-    # await client.tree.sync()
+    await tree.sync(guild=discord.Object(id=SERVER_ID))
     print(f"We have logged in as {client.user}")
+
+
+@tree.command(name="challenge", description="Create a random Project Zomboid challenge for your game.", guild=discord.Object(id=SERVER_ID))
+async def custom_challenge(interaction):
+    # ToDo: env verifizieren mit verfügbarkeit und type
+    if interaction.channel.id != int(CHANNEL_CUSTOM_CHALLENGE_ID):
+        # ToDo: Text in config
+        await interaction.response.send_message("Falscher Channel", ephemeral=True, delete_after=60)
+        return
+    user = User(
+        user_id=interaction.user.id,
+        user_name=interaction.user.display_name,
+        user_display_name=interaction.user.global_name,
+    )
+    view = CustomChallenge(user=user)
+    await interaction.response.send_message(view=view)
+    await view.wait()
+    result = view.response
+    if result is not None:
+        task_create_custom_challenge = asyncio.create_task(
+            custom_challenge_handler(result[0])
+        )
+        game_settings = await task_create_custom_challenge
+        if game_settings["successful_generated"]:
+            picture_path = await create_challenge_picture(game_settings, user)
+            with open(picture_path, "rb") as file:
+                image = discord.File(file)
+                await interaction.channel.send(
+                    f"{user.user_display_name} das ist deine Challenge:"
+                )
+                await interaction.channel.send(file=image)
+        else:
+            await interaction.channel.send(
+                f"{user.user_display_name}, es ist ein Fehler aufgetreten. Bitte erstelle "
+                f"nochmal eine Challenge. Ein Fehler-Report ist gespeichert."
+            )
+
+
+@tree.command(name="streamchallenge", description="Create a Project Zomboid challenge for TeTü.", guild=discord.Object(id=SERVER_ID))
+async def stream_challenge(interaction):
+    if interaction.channel.id != int(CHANNEL_STREAM_CHALLENGE_ID):
+        # ToDo: Text in config
+        await interaction.response.send_message("Falscher Channel", ephemeral=True, delete_after=60)
+        return
+    if int(STREAM_CHALLENGE_CREATOR_ROLE_ID) not in [role.id for role in interaction.user.roles]:
+        await interaction.response.send_message("Du hast keine Berechtigung, löse dazu Kanalpunkte ein.", ephemeral=True, delete_after=60)
+        return
+    user = User(
+        user_id=interaction.user.id,
+        user_name=interaction.user.display_name,
+        user_display_name=interaction.user.global_name,
+    )
+    user_message = send_user_info_message_with_points(
+        stream_challenge_config["TotalPoints"]
+    )
+    await interaction.response.send_message(user_message)
+    view = StreamChallengeStage(user=user, interaction=interaction)
+    await interaction.channel.send(view=view)
+    await view.wait()
+    result = view.game_settings
+    # await view.reset_settings()
+    approval_message = send_user_info_message_for_approval(result)
+    await interaction.channel.send(approval_message)
+    approval_view = SteamChallengeApproval(user)
+    await interaction.channel.send(view=approval_view)
+    await approval_view.wait()
+    approval_result = approval_view.response
+    if "yes" in approval_result[0].lower():
+        await herr_apfelring(result, user)
+        role = interaction.guild.get_role(int(STREAM_CHALLENGE_CREATOR_ROLE_ID))
+        await interaction.user.remove_roles(role, reason="Finish stream challenge creation.")
+    print(approval_result)
+    print(result)
 
 
 @client.event
@@ -459,17 +536,10 @@ async def on_message(message) -> None:
         await message.channel.send(view=approval_view)
         await approval_view.wait()
         approval_result = approval_view.response
+        if "yes" in approval_result[0].lower():
+            herr_apfelring(result, user)
         print(approval_result)
         print(result)
-
-
-# user_message = send_user_info_message_for_approval(self.game_settings)
-# await self.info_message.edit(
-#     content=user_message)
-
-# @client.tree.command(name="setcolor", description="Test command")
-# async def setcolor(interaction: discord.Interaction):
-#     await interaction.response.send("Select your color")
 
 
 def main() -> None:

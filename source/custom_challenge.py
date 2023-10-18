@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import random
 from source.game_settings import (
-    config,
+    custom_config,
     LIST_OF_NEGATIVE_TRAITS,
     LIST_OF_POSITIVE_TRAITS,
 )
@@ -45,11 +45,11 @@ async def finish_trait_value(trait_value: int, game_settings: dict) -> None:
 
 
 async def check_trait_possible(trait: str, game_settings: dict) -> bool:
-    if not trait in config:
+    if not trait in custom_config:
         return True
     return not any(
         True
-        for element in config[trait]
+        for element in custom_config[trait]
         if element
         in (game_settings["positive_traits"] + game_settings["negative_traits"])
     )
@@ -59,14 +59,14 @@ async def check_difference_small_enough(trait: str, game_settings: dict) -> bool
     if game_settings["difficulty"] == "Impossible":
         return True
     trait_difference_thr = game_settings["trait_difference_thr"]
-    if trait in config["NegativePropertiesValue"]:
-        if abs(config["NegativePropertiesValue"][trait]) <= trait_difference_thr:
+    if trait in custom_config["NegativePropertiesValue"]:
+        if abs(custom_config["NegativePropertiesValue"][trait]) <= trait_difference_thr:
             if trait_difference_thr > TRAIT_DIFFERENCE_MIN_THR:
                 game_settings["trait_difference_thr"] = trait_difference_thr // 2
             return True
         return False
-    if trait in config["PositivePropertiesValue"]:
-        if abs(config["PositivePropertiesValue"][trait]) <= trait_difference_thr:
+    if trait in custom_config["PositivePropertiesValue"]:
+        if abs(custom_config["PositivePropertiesValue"][trait]) <= trait_difference_thr:
             game_settings["trait_difference_thr"] = trait_difference_thr // 2
             if trait_difference_thr > TRAIT_DIFFERENCE_MIN_THR:
                 game_settings["trait_difference_thr"] = trait_difference_thr // 2
@@ -110,7 +110,7 @@ async def create_custom_challenge(
                     f"Vergleichswert: {trait_difference_thr}"
                 )
                 continue
-            trait_value += config["NegativePropertiesValue"][negative_trait]
+            trait_value += custom_config["NegativePropertiesValue"][negative_trait]
             game_settings["negative_traits"].append(negative_trait)
             min_run_trait_loops -= 1
         elif trait_value > end_trait_value:
@@ -131,7 +131,7 @@ async def create_custom_challenge(
             if not await check_difference_small_enough(positive_trait, game_settings):
                 time_out -= 1
                 continue
-            trait_value += config["PositivePropertiesValue"][positive_trait]
+            trait_value += custom_config["PositivePropertiesValue"][positive_trait]
             game_settings["positive_traits"].append(positive_trait)
             min_run_trait_loops -= 1
         else:
@@ -151,7 +151,7 @@ async def create_custom_challenge(
             if not await check_difference_small_enough(positive_trait, game_settings):
                 time_out -= 1
                 continue
-            trait_value += config["PositivePropertiesValue"][positive_trait]
+            trait_value += custom_config["PositivePropertiesValue"][positive_trait]
             game_settings["positive_traits"].append(positive_trait)
             min_run_trait_loops -= 1
         if time_out <= 0:

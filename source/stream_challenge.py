@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import discord
-from source.game_settings import config, stream_challenge_config
+from source.game_settings import custom_config, stream_challenge_config
+
+
+
 
 
 def stream_challenge_location() -> str:
@@ -48,15 +51,15 @@ def negative_trait_three(game_settings: dict) -> list:
     trait_options_three = []
 
     for key in all_neg_traits_three:
-        if key in config["NegativePropertiesValueSubstitute"]:
-            value = config["NegativePropertiesValueSubstitute"][key]
-        elif key in config["NegativePropertiesValue"]:
-            value = config["NegativePropertiesValue"][key]
+        if key in custom_config["NegativePropertiesValueSubstitute"]:
+            value = custom_config["NegativePropertiesValueSubstitute"][key]
+        elif key in custom_config["NegativePropertiesValue"]:
+            value = custom_config["NegativePropertiesValue"][key]
         else:
             value = 0
         temp_abort = False
-        if key in config:
-            for trait in config[key]:
+        if key in custom_config:
+            for trait in custom_config[key]:
                 if trait in selected_neg_traits_one_two:
                     temp_abort = True
                     break
@@ -84,15 +87,15 @@ def negative_trait_two(game_settings: dict) -> list:
     trait_options_two = []
 
     for key in all_neg_traits_two:
-        if key in config["NegativePropertiesValueSubstitute"]:
-            value = config["NegativePropertiesValueSubstitute"][key]
-        elif key in config["NegativePropertiesValue"]:
-            value = config["NegativePropertiesValue"][key]
+        if key in custom_config["NegativePropertiesValueSubstitute"]:
+            value = custom_config["NegativePropertiesValueSubstitute"][key]
+        elif key in custom_config["NegativePropertiesValue"]:
+            value = custom_config["NegativePropertiesValue"][key]
         else:
             value = 0
         temp_abort = False
-        if key in config:
-            for trait in config[key]:
+        if key in custom_config:
+            for trait in custom_config[key]:
                 if trait in selected_neg_traits_one:
                     temp_abort = True
                     break
@@ -114,10 +117,10 @@ def negative_trait_one(game_settings: dict) -> list:
     traits_option_one = []
 
     for key in all_neg_traits_one:
-        if key in config["NegativePropertiesValueSubstitute"]:
-            value = config["NegativePropertiesValueSubstitute"][key]
-        elif key in config["NegativePropertiesValue"]:
-            value = config["NegativePropertiesValue"][key]
+        if key in custom_config["NegativePropertiesValueSubstitute"]:
+            value = custom_config["NegativePropertiesValueSubstitute"][key]
+        elif key in custom_config["NegativePropertiesValue"]:
+            value = custom_config["NegativePropertiesValue"][key]
         else:
             value = 0
         if value <= game_settings["challenge_points"]:

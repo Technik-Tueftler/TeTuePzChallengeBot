@@ -4,8 +4,9 @@ import random
 import yaml
 from collections import namedtuple
 from source.constants import (
-    CONFIGURATION_FILE,
-    CONFI_STREAM_CHALLENGE_FILE,
+    CONFIG_FILE,
+    CONFIG_CUSTOM_CHALLENGE_FILE,
+    CONFIG_STREAM_CHALLENGE_FILE,
     USER_INFO_MESSAGE_1,
     USER_INFO_MESSAGE_2,
     USER_INFO_MESSAGE_APPROVAL_1,
@@ -15,14 +16,17 @@ from source.constants import (
     USER_INFO_MESSAGE_APPROVAL_5,
 )
 
-with open(CONFIGURATION_FILE, encoding="utf-8") as f:
+with open(CONFIG_FILE, encoding="utf-8") as f:
     config = yaml.safe_load(f)
 
-with open(CONFI_STREAM_CHALLENGE_FILE, encoding="utf-8") as f:
+with open(CONFIG_CUSTOM_CHALLENGE_FILE, encoding="utf-8") as f:
+    custom_config = yaml.safe_load(f)
+
+with open(CONFIG_STREAM_CHALLENGE_FILE, encoding="utf-8") as f:
     stream_challenge_config = yaml.safe_load(f)
 
-LIST_OF_POSITIVE_TRAITS = list(config["PositivePropertiesValue"].keys())
-LIST_OF_NEGATIVE_TRAITS = list(config["NegativePropertiesValue"].keys())
+LIST_OF_POSITIVE_TRAITS = list(custom_config["PositivePropertiesValue"].keys())
+LIST_OF_NEGATIVE_TRAITS = list(custom_config["NegativePropertiesValue"].keys())
 
 substitution_dictionary = {
     ord("Ü"): "Ue",
@@ -37,69 +41,75 @@ substitution_dictionary = {
 User = namedtuple("User", ["user_id", "user_name", "user_display_name"])
 
 
+def write_config(key: str, value) -> None:
+    config[key] = value
+    with open(CONFIG_FILE, 'w', encoding="utf-8") as datei:
+        yaml.dump(config, datei, default_flow_style=False)
+
+
 def get_location(difficulty: str) -> list[str, int]:
     location_settings = ["Location", 0]
     if difficulty == "Easy":
-        location_settings[0] = random.choice(list(config["EasyStartLocation"].keys()))
-        location_settings[1] = config["EasyStartLocation"][location_settings[0]]
+        location_settings[0] = random.choice(list(custom_config["EasyStartLocation"].keys()))
+        location_settings[1] = custom_config["EasyStartLocation"][location_settings[0]]
     elif difficulty == "Hard":
-        location_settings[0] = random.choice(list(config["HardStartLocation"].keys()))
-        location_settings[1] = config["HardStartLocation"][location_settings[0]]
+        location_settings[0] = random.choice(list(custom_config["HardStartLocation"].keys()))
+        location_settings[1] = custom_config["HardStartLocation"][location_settings[0]]
     elif difficulty == "Impossible":
         location_settings[0] = random.choice(
-            list(config["ImpossibleStartLocation"].keys())
+            list(custom_config["ImpossibleStartLocation"].keys())
         )
-        location_settings[1] = config["ImpossibleStartLocation"][location_settings[0]]
+        location_settings[1] = custom_config["ImpossibleStartLocation"][location_settings[0]]
     return location_settings
 
 
 def get_profession(difficulty: str) -> list[str, int]:
     profession_settings = ["Profession", 0]
     if difficulty == "Easy":
-        profession_settings[0] = random.choice(list(config["EasyProfessions"].keys()))
-        profession_settings[1] = config["EasyProfessions"][profession_settings[0]]
+        profession_settings[0] = random.choice(list(custom_config["EasyProfessions"].keys()))
+        profession_settings[1] = custom_config["EasyProfessions"][profession_settings[0]]
     elif difficulty == "Hard":
-        profession_settings[0] = random.choice(list(config["HardProfessions"].keys()))
-        profession_settings[1] = config["HardProfessions"][profession_settings[0]]
+        profession_settings[0] = random.choice(list(custom_config["HardProfessions"].keys()))
+        profession_settings[1] = custom_config["HardProfessions"][profession_settings[0]]
     elif difficulty == "Impossible":
         profession_settings[0] = random.choice(
-            list(config["ImpossibleProfessions"].keys())
+            list(custom_config["ImpossibleProfessions"].keys())
         )
-        profession_settings[1] = config["ImpossibleProfessions"][profession_settings[0]]
+        profession_settings[1] = custom_config["ImpossibleProfessions"][profession_settings[0]]
     return profession_settings
 
 
 def get_mission(difficulty: str) -> list[str, int]:
     mission_settings = ["Mission", 0]
     if difficulty == "Easy":
-        mission_settings[0] = random.choice(config["EasyMission"])
+        mission_settings[0] = random.choice(custom_config["EasyMission"])
     elif difficulty == "Hard":
-        mission_settings[0] = random.choice(config["HardMission"])
+        mission_settings[0] = random.choice(custom_config["HardMission"])
     elif difficulty == "Impossible":
-        mission_settings[0] = random.choice(config["ImpossibleMission"])
+        mission_settings[0] = random.choice(custom_config["ImpossibleMission"])
     return mission_settings
 
 
 def get_settings(difficulty: str) -> str:
     if difficulty == "Easy":
-        return random.choice(config["EasySettings"])
+        return random.choice(custom_config["EasySettings"])
     elif difficulty == "Hard":
-        return random.choice(config["HardSettings"])
+        return random.choice(custom_config["HardSettings"])
     elif difficulty == "Impossible":
-        return random.choice(config["ImpossibleSettings"])
+        return random.choice(custom_config["ImpossibleSettings"])
 
 
 def get_end_trait_value(difficulty: str) -> int:
-    return config["EndTraitValue"][difficulty]
+    return custom_config["EndTraitValue"][difficulty]
 
 
 def total_sum_of_neg_traits(traits: list) -> int:
     trait_sum = 0
     for element in traits:
-        if element in config["NegativePropertiesValueSubstitute"]:
-            trait_sum += config["NegativePropertiesValueSubstitute"][element]
-        elif element in config["NegativePropertiesValue"]:
-            trait_sum += config["NegativePropertiesValue"][element]
+        if element in custom_config["NegativePropertiesValueSubstitute"]:
+            trait_sum += custom_config["NegativePropertiesValueSubstitute"][element]
+        elif element in custom_config["NegativePropertiesValue"]:
+            trait_sum += custom_config["NegativePropertiesValue"][element]
         else:
             print(f"Fehler bei trait: {element}")
     return trait_sum
