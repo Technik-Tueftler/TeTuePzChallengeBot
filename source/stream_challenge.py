@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+Package provide all the function and settings to create stream challenges
+"""
 import discord
 from source.game_settings import custom_config, stream_challenge_config
 
 
-
-
-
-def stream_challenge_location() -> str:
+def stream_challenge_location() -> list:
+    """
+    Create a list for locations in selection
+    :return: Sorted list of missions in options
+    """
     return [
         discord.SelectOption(
             label=area,
@@ -18,6 +22,11 @@ def stream_challenge_location() -> str:
 
 
 def mission_value(selected_mission: list) -> int:
+    """
+    Calculate the trait value of the selected mission
+    :param selected_mission: List of missions to calculate the trait value
+    :return: Trait value of the missions
+    """
     trait_sum = 0
     for element in selected_mission:
         trait_sum += stream_challenge_config["Mission"][element]
@@ -25,17 +34,23 @@ def mission_value(selected_mission: list) -> int:
 
 
 def mission(game_settings: dict) -> list:
+    """
+    Create a list for missions in selection
+    :param game_settings: current game settings
+    :return: Sorted list of missions in options
+    """
     challenge_points = game_settings["challenge_points"]
     all_missions = stream_challenge_config["Mission"]
     all_possible_missions = []
     for key in all_missions:
-        mission_value = all_missions[key]
-        if mission_value <= challenge_points:
+        mission_trait_value = all_missions[key]
+        if mission_trait_value <= challenge_points:
             all_possible_missions.append(
                 [
-                    mission_value,
+                    mission_trait_value,
                     discord.SelectOption(
-                        label=key, description=f"Points weighting: {mission_value}"
+                        label=key,
+                        description=f"Points weighting: {mission_trait_value}",
                     ),
                 ]
             )
@@ -44,6 +59,11 @@ def mission(game_settings: dict) -> list:
 
 
 def negative_trait_three(game_settings: dict) -> list:
+    """
+    Create a list for traits in selection three
+    :param game_settings: current game settings
+    :return: Sorted list of traits in options
+    """
     selected_neg_traits_one_two = (
         game_settings["negative_trait_1"] + game_settings["negative_trait_2"]
     )
@@ -82,6 +102,11 @@ def negative_trait_three(game_settings: dict) -> list:
 
 
 def negative_trait_two(game_settings: dict) -> list:
+    """
+    Create a list for traits in selection two
+    :param game_settings: current game settings
+    :return: Sorted list of traits in options
+    """
     selected_neg_traits_one = game_settings["negative_trait_1"]
     all_neg_traits_two = stream_challenge_config["NegativePropertiesValueOptionTwo"]
     trait_options_two = []
@@ -113,6 +138,11 @@ def negative_trait_two(game_settings: dict) -> list:
 
 
 def negative_trait_one(game_settings: dict) -> list:
+    """
+    Create a list for trait in selection one
+    :param game_settings: current game settings
+    :return: Sorted list of traits in options
+    """
     all_neg_traits_one = stream_challenge_config["NegativePropertiesValueOptionOne"]
     traits_option_one = []
 
@@ -137,7 +167,10 @@ def negative_trait_one(game_settings: dict) -> list:
 
 
 def main() -> None:
-    pass
+    """
+    Scheduling function for regular call.
+    :return: None
+    """
 
 
 if __name__ == "__main__":
