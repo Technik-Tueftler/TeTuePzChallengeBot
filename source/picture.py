@@ -8,7 +8,13 @@ import random
 import uuid
 from datetime import datetime
 from PIL import Image, ImageFont, ImageDraw
-from source.game_settings import User, substitution_dictionary, write_config, config
+from source.game_settings import (
+    User,
+    substitution_dictionary,
+    write_config,
+    config,
+    remove_wildcard_selection,
+)
 from source.constants import (
     GENERIC_IMAGE_PATH,
     MAX_CHARS_PRINT,
@@ -83,8 +89,7 @@ async def herr_apfelring(  # pylint: disable=too-many-locals
         + game_settings["negative_trait_2"]
         + game_settings["negative_trait_3"]
     )
-    if "Nichts auswählen" in negative_traits:
-        negative_traits.remove("Nichts auswählen")
+    remove_wildcard_selection(negative_traits)
     text = "Mit den negativen Traits:"
     draw.text((10, 140), text, fill=color, font=font)
     pos_x = 350

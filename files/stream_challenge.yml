@@ -10,9 +10,9 @@ StartingArea:
   Louisville – Old Louisville: 18
   Louisville – Phoenix Hill: 18
   Louisville – Central: 20
-NegativePropertiesValueOptionOne: [Nichts auswählen, Langsam-Leser, Tollpatschig, Magenleiden, Agoraphobisch, Gesunder Appetit, Pechvogel, Schwaches Immunsystem, Feige, Schwerhörig, Hämatophobie, Außer Form, Langsam-Lerner, Schlaf-gestört, Untergewichtig]
-NegativePropertiesValueOptionTwo: [Nichts auswählen, Analphabet, Klaustrophobisch, Taub, Couch-Kartoffel, Schwach, Messie, Übergewichtig,Schusslig, Pazifist, Asthmatiker, Sonntagsfahrer]
-NegativePropertiesValueOptionThree: [Nichts auswählen, Durstig, Langsam-Heiler, Fettleibig, Dünnhäutig, Raucher, Gebrechlich, Schlafmütze, Auffällig]
+NegativePropertiesValueOptionOne: [Langsam-Leser, Tollpatschig, Magenleiden, Agoraphobisch, Gesunder Appetit, Pechvogel, Schwaches Immunsystem, Feige, Schwerhörig, Hämatophobie, Außer Form, Langsam-Lerner, Schlaf-gestört, Untergewichtig]
+NegativePropertiesValueOptionTwo: [Analphabet, Klaustrophobisch, Taub, Couch-Kartoffel, Schwach, Messie, Übergewichtig,Schusslig, Pazifist, Asthmatiker, Sonntagsfahrer]
+NegativePropertiesValueOptionThree: [Durstig, Langsam-Heiler, Fettleibig, Dünnhäutig, Raucher, Gebrechlich, Schlafmütze, Auffällig]
 Mission:
   Säubere die Start-Stadt von Zombies: 20
   Überlebe einen Monat: 0

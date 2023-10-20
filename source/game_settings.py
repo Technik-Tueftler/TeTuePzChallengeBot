@@ -17,6 +17,7 @@ from source.constants import (
     USER_INFO_MESSAGE_APPROVAL_3,
     USER_INFO_MESSAGE_APPROVAL_4,
     USER_INFO_MESSAGE_APPROVAL_5,
+    DEFAULT_SKIP_SELECTION,
 )
 
 with open(CONFIG_FILE, encoding="utf-8") as f:
@@ -181,11 +182,12 @@ def send_user_info_message_with_points(points: int) -> str:
     return USER_INFO_MESSAGE_1 + str(points) + USER_INFO_MESSAGE_2
 
 
-def send_user_info_message_for_approval(game_settings: dict) -> str:
+def get_all_negative_traits(game_settings: dict) -> list:
     """
-    Send user information message with all selected game settings
+    Combine all the negative traits from game settings and delete process created
+    and not used traits.
     :param game_settings: Current game settings
-    :return: Information as string
+    :return: List of all negative traits
     """
     negative_traits = (
         game_settings["negative_trait_1"]
@@ -194,6 +196,16 @@ def send_user_info_message_for_approval(game_settings: dict) -> str:
     )
     if "Nichts auswählen" in negative_traits:
         negative_traits.remove("Nichts auswählen")
+    return negative_traits
+
+
+def send_user_info_message_for_approval(game_settings: dict) -> str:
+    """
+    Send user information message with all selected game settings
+    :param game_settings: Current game settings
+    :return: Information as string
+    """
+    negative_traits = get_all_negative_traits(game_settings)
     info_message = (
         USER_INFO_MESSAGE_APPROVAL_1
         + game_settings["start_location"]
@@ -210,6 +222,18 @@ def send_user_info_message_for_approval(game_settings: dict) -> str:
         + USER_INFO_MESSAGE_APPROVAL_5
     )
     return info_message
+
+
+def remove_wildcard_selection(traits: list) -> None:
+    """
+    Remote the wildcard from a trait list
+    :param traits: List of traits
+    :return: None
+    """
+    selection = DEFAULT_SKIP_SELECTION
+    if "wildcard_skip_selection" in config:
+        selection = config["wildcard_skip_selection"]
+    traits.remove(selection)
 
 
 def main() -> None:

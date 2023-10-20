@@ -45,7 +45,6 @@ intents.message_content = True
 
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-# client = commands.Bot(command_prefix="-", intents=discord.Intents.all())
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN", None)
 CHANNEL_CUSTOM_CHALLENGE_NAME = os.getenv("CHANNEL_CUSTOM_CHALLENGE_NAME", None)
 CHANNEL_CUSTOM_CHALLENGE_ID = os.getenv("CHANNEL_CUSTOM_CHALLENGE_ID", None)
@@ -281,17 +280,6 @@ class StreamChallengeStage(discord.ui.View):
     """
     Class to create dropdown menu for creating a stream challenge for the streamer
     """
-
-    # game_settings = {
-    #     "challenge_points": stream_challenge_config["TotalPoints"],
-    #     "start_location": None,
-    #     "negative_trait_1": None,
-    #     "negative_trait_2": None,
-    #     "negative_trait_3": None,
-    #     "prohibitions": None,
-    #     "mission": None,
-    #     "choices_valid": False,
-    # }
     options = stream_challenge_location()
 
     def __init__(self, user, interaction, timeout=300):
@@ -312,9 +300,6 @@ class StreamChallengeStage(discord.ui.View):
     @discord.ui.select(
         placeholder="Select the starting area",
         options=options,
-        # options=[discord.SelectOption(label="Test",description=f"Points weighting"),
-        #          discord.SelectOption(label="Test2",description=f"Points weighting"),
-        #         ],
         min_values=1,
         max_values=1,
     )
