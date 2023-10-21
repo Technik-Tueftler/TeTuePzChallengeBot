@@ -22,7 +22,7 @@ USER_INFO_MESSAGE_APPROVAL_4 = "Die Restpunkte betragen: "
 USER_INFO_MESSAGE_APPROVAL_5 = (
     "Möchtest du die Challenge so erstellen oder nochmal neu starten?"
 )
-USER_INFO_WRONG_CHANNEL = "Falscher Channel für diesen Befehl."
+USER_INFO_WRONG_CHANNEL = "Falscher Channel für diesen Befehl. Bitte hier versuchen: "
 USER_INFO_NO_ROLE = "Du hast keine Berechtigung, löse dazu Kanalpunkte ein."
 DEFAULT_SKIP_SELECTION = "Choose nothing"
 DEFAULT_SKIP_SELECTION_DESCRIPTION = "Skip this selection"

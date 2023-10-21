@@ -233,7 +233,8 @@ def remove_wildcard_selection(traits: list) -> None:
     selection = DEFAULT_SKIP_SELECTION
     if "wildcard_skip_selection" in config:
         selection = config["wildcard_skip_selection"]
-    traits.remove(selection)
+    if selection in traits:
+        traits.remove(selection)
 
 
 def main() -> None:

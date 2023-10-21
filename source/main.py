@@ -46,8 +46,9 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN", None)
-CHANNEL_CUSTOM_CHALLENGE_NAME = os.getenv("CHANNEL_CUSTOM_CHALLENGE_NAME", None)
+CHANNEL_CUSTOM_CHALLENGE_LINK = os.getenv("CHANNEL_CUSTOM_CHALLENGE_LINK", None)
 CHANNEL_CUSTOM_CHALLENGE_ID = os.getenv("CHANNEL_CUSTOM_CHALLENGE_ID", None)
+CHANNEL_STREAM_CHALLENGE_LINK = os.getenv("CHANNEL_STREAM_CHALLENGE_LINK", None)
 CHANNEL_STREAM_CHALLENGE_ID = os.getenv("CHANNEL_STREAM_CHALLENGE_ID", None)
 SERVER_ID = os.getenv("SERVER_ID", None)
 STREAM_CHALLENGE_CREATOR_ROLE_ID = os.getenv("STREAM_CHALLENGE_CREATOR_ROLE_ID", None)
@@ -280,6 +281,7 @@ class StreamChallengeStage(discord.ui.View):
     """
     Class to create dropdown menu for creating a stream challenge for the streamer
     """
+
     options = stream_challenge_location()
 
     def __init__(self, user, interaction, timeout=300):
@@ -466,8 +468,9 @@ async def custom_challenge(interaction: discord.interactions.Interaction) -> Non
     :return:
     """
     if interaction.channel.id != int(CHANNEL_CUSTOM_CHALLENGE_ID):
+        message = USER_INFO_WRONG_CHANNEL + CHANNEL_CUSTOM_CHALLENGE_LINK
         await interaction.response.send_message(
-            USER_INFO_WRONG_CHANNEL, ephemeral=True, delete_after=60
+            message, ephemeral=True, delete_after=60
         )
         return
     user = User(
@@ -511,8 +514,9 @@ async def stream_challenge(interaction: discord.interactions.Interaction) -> Non
     :return: None
     """
     if interaction.channel.id != int(CHANNEL_STREAM_CHALLENGE_ID):
+        message = USER_INFO_WRONG_CHANNEL + CHANNEL_STREAM_CHALLENGE_LINK
         await interaction.response.send_message(
-            USER_INFO_WRONG_CHANNEL, ephemeral=True, delete_after=60
+            message, ephemeral=True, delete_after=60
         )
         return
     if int(STREAM_CHALLENGE_CREATOR_ROLE_ID) not in [
@@ -574,7 +578,18 @@ def main() -> None:
     Scheduling function for regular call.
     :return: None
     """
-    client.run(DISCORD_TOKEN)
+    if not None in (
+        DISCORD_TOKEN,
+        CHANNEL_CUSTOM_CHALLENGE_LINK,
+        CHANNEL_CUSTOM_CHALLENGE_ID,
+        CHANNEL_STREAM_CHALLENGE_LINK,
+        CHANNEL_STREAM_CHALLENGE_ID,
+        SERVER_ID,
+        STREAM_CHALLENGE_CREATOR_ROLE_ID,
+    ):
+        client.run(DISCORD_TOKEN)
+    else:
+        print("One of the environmental variables is not defined")
 
 
 if __name__ == "__main__":
