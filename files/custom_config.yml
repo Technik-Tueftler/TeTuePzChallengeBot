@@ -1,0 +1,279 @@
+EndTraitValue:
+  Easy: 0
+  Hard: 5
+  Impossible: 10
+EasyStartLocation:
+  Rosewood: 0
+  Riverside: 0
+HardStartLocation:
+  Muldraugh: 2
+  Westpoint: -2
+ImpossibleStartLocation:
+  Muldraugh: 5
+  Westpoint: 2
+EasyMission: [Überlebe einen Monat., Baue eine Standard-Base mit Strom- und Wasserversorgung., Töte 1000 Zombies]
+HardMission: [Erreiche bei 2 Fähigkeiten Stufe 10, Töte 30.000 Zombies]
+ImpossibleMission: [Erreiche bei 5 Fähigkeiten Stufe 10, Säubere alle 4 Standard-Start-Städte, Töte 100.000 Zombies]
+EasySettings: [Apokalypse | Respawn aus | Mehrfachtreffer ein]
+HardSettings: [Apokalypse | Respawn ein | Mehrfachtreffer aus]
+ImpossibleSettings: [Apokalypse | Respawn ein | Mehrfachtreffer aus]
+MinTraits:
+  Easy: 1
+  Hard: 3
+  Impossible: 5
+NegativePropertiesValueSubstitute:
+  Sonntagsfahrer: 1
+  Feige: 2
+NegativePropertiesValue:
+  Kurzsichtig: 2
+  Langsam-Leser: 2
+  Schusslig: 2
+  Tollpatschig: 2
+  Magenleiden: 3
+  Agoraphobisch: 4
+  Auffällig: 4
+  Gesunder Appetit: 4
+  Klaustrophobisch: 4
+  Messie: 4
+  Pazifist: 4
+  Pechvogel: 4
+  Raucher: 4
+  Schlafmütze: 4
+  Schwaches Immunsystem: 4
+  Schwerhörig: 4
+  Asthmatiker: 5
+  Hämatophobie: 5
+  Außer Form: 6
+  Durstig: 6
+  Gebrechlich: 6
+  Langsam-Heiler: 6
+  Langsam-Lerner: 6
+  Schlaf-gestört: 6
+  Untergewichtig: 6
+  Übergewichtig: 6
+  Analphabet: 8
+  Dünnhäutig: 8
+  Couch-Kartoffel: 10
+  Fettleibig: 10
+  Schwach: 10
+  Taub: 12
+NegativePropertiesDescription:
+  Sonntagsfahrer: Der langsame Fahrer.
+  Feige: Besonders anfällig für Panikattacken.
+  Kurzsichtig: Kurze Blickdistanz und langsameres Sichtbarkeitsfading.
+  Langsam-Leser: Benötigt mehr Zeit um Bücher zu lesen.
+  Schusslig: Bewegt Inventargegenstände langsamer.
+  Tollpatschig: Macht mehr Geräusche beim Bewegen.
+  Magenleiden: Erhöhte Chance auf Lebensmittelvergiftung.
+  Agoraphobisch: Wird im freien panisch.
+  Auffällig: Wird eher von Zombies entdeckt.
+  Gesunder Appetit: Muss öfter essen.
+  Klaustrophobisch: Wird in Gebäuden panisch.
+  Messie: Verminderte Kapazität, kann weniger Transportieren.
+  Pazifist: weniger effektiv mit Waffen.
+  Pechvogel: Alles, was schiefgehen kann, wird auch schiefgehen.
+  Raucher: Unzufriedenheit- und Stressreduzierung nach Rauchen. Die Unzufriedenheit steigt, wenn nicht geraucht wird.
+  Schlafmütze: Benötigt mehr Schlaf.
+  Schwaches Immunsystem: Anfälliger für Krankheiten und schnellere Zombiefizierungsrate.
+  Schwerhörig: Kleinerer Aufmerksamkeitsradius und Lauschdistanz.
+  Asthmatiker: Schnellerer Ausdauerverlust.
+  Hämatophobie: Stressempfinden, wenn blutverschmiert. Panik bei der Durchführung von Erster-Hilfe.
+  Außer Form: Niedrige Ausdauer, geringere Ausdauerregeneration.
+  Durstig: Braucht mehr Wasser um zu überleben.
+  Gebrechlich: Geringeres Zurückstoßen von Gegnern und weniger Tragekapazität.
+  Langsam-Heiler: Erholt sich langsam von Verletzungen und Krankheiten.
+  Langsam-Lerner: Verminderte XP Gewinne.
+  Schlaf-gestört: Langsamer Rückgang der Müdigkeit während des Schlafens.
+  Untergewichtig: Langsameres Laufen und ermüdet schneller.
+  Übergewichtig: Langsameres Laufen und ermüdet schneller.
+  Analphabet: Kann keine Bücher lesen.
+  Dünnhäutig: Trägt erhöhtes Infektionsrisiko.
+  Couch-Kartoffel: Sehr geringe Ausdauer und sehr geringe Ausdauerregeneration
+  Fettleibig: Reduzierte Renngeschwindigkeit, sehr geringe Ausdauer und anfälliger für Verletzungen.
+  Schwach: Geringeres Zurückstoßen von Gegnern und weniger Tragekapazität.
+  Taub: Kann nichts hören.
+PositivePropertiesValueSubstitute:
+  Geschwindigkeitsdämon: -1
+  Gewandt: -2
+PositivePropertiesValue:
+  Katzenaugen: -2
+  Naturbursche: -2
+  Schlaflos: -2
+  Schnell-Leser: -2
+  Darm aus Stahl: -3
+  Anmutig: -4
+  Appetitlosigkeit: -4
+  Baseball-Spieler: -4
+  Ernährungswissenschaftler: -4
+  Ersthelfer: -4
+  Fischer: -4
+  Glückspilz: -4
+  Gärtner: -4
+  Läufer: -4
+  Mutig: -4
+  Näher: -4
+  Resistent: -4
+  Unauffällig: -4
+  Hobby-Kfz-Mechaniker: -5
+  Turner: -5
+  Ehemaliger Pfadfinder: -6
+  Fit: -6
+  Gutes Hörvermögen: -6
+  Kamel: -6
+  Kneipenschläger: -6
+  Koch: -6
+  Kräutersammler: -6
+  Luchsaugen: -6
+  Organisiert: -6
+  Schnell-Heiler: -6
+  Schnell-Lerner: -6
+  Stämmig: -6
+  Wanderer: -6
+  Adrenalinjunkie: -8
+  Dickhäutig: -8
+  Geschickt: -8
+  Jäger: -8
+  Athletisch: -10
+  Stark: -10
+PositivePropertiesDescription:
+  Geschwindigkeitsdämon: Der schnelle Fahrer
+  Gewandt: Bewegt Inventargegenstände schneller.
+  Katzenaugen: Bessere Sicht bei Nacht
+  Naturbursche: Schlechtes Wetter hat keinen Einfluss und zusätzliche Orientierungsfähigkeit.
+  Schlaflos: Benötigt weniger Schlaf.
+  Schnell-Leser: Benötigt weniger Zeit, um Bücher zu lesen.
+  Darm aus Stahl: Geringe Chance auf Lebensmittelvergiftung.
+  Anmutig: Macht weniger Geräusche beim Bewegen.
+  Appetitlosigkeit: Mess seltener essen.
+  Baseball-Spieler: Haut immer zielgenau druff!
+  Ernährungswissenschaftler: Kann die Nährwerte von Lebensmitteln sehen.
+  Ersthelfer: Weis wie man Bisswunden zunäht.
+  Fischer: Der Köder muss dem Fisch schmecken, nicht dem Angler!
+  Glückspilz: Manchmal läuft es einfach wie geschmiert.
+  Gärtner: Weis wie man Grünzeug zum wachsen bringt.
+  Läufer: Rennt jeder Leiche davon.
+  Mutig: Weniger anfällig für Panikattacken.
+  Näher: Kann besser nähen.
+  Resistent: eniger anfällig für Krankheiten und langsamere Zombifizierungsrate.
+  Unauffällig: Weniger wahrscheinlich von Zombies entdeckt zu werden.
+  Hobby-Kfz-Mechaniker: Verfügt über detaillierte Kenntnisse über Fahrzeugmodelle und Reperaturen.
+  Turner: Sehr agil.
+  Ehemaliger Pfadfinder: Findet Nahrung in der Natur und kennt sich mit Humanmedizin aus.
+  Fit: Fit.
+  Gutes Hörvermögen: Größerer Aufmerksamkeitsradius.
+  Kamel: Benötigt weniger Wasser zum überleben.
+  Kneipenschläger: Kann zielgenau drauf hauen und schlitzen.
+  Koch: Kennt viele Kochrezepte.
+  Kräutersammler: Findet Heilkräuter und kann Arzneimittel herstellen.
+  Luchsaugen: Schnelleres Sichtbarkeitsfading.
+  Organisiert: Erhöhte Kapazität, kann mehr Transportieren.
+  Schnell-Heiler: Erholt sich schnell von Verletzungen und Krankheiten.
+  Schnell-Lerner: Erhöhte XP Gewinne.
+  Stämmig: Zusätzliches Zurückstoßen von Gegnern und mehr Tragekapazität.
+  Wanderer: Kann Jagen und findet Nahrung in der Natur.
+  Adrenalinjunkie: Bewegt sich schneller, enn in Panik.
+  Dickhäutig: Geringere Chance, dass Kratzer und Bisse in die Haut eindringen.
+  Geschickt: Schnelleres Verbarrikadieren.
+  Jäger: Waidmannsheil!
+  Athletisch: Schnelles Laufen und kann länger laufen ohne zu ermüden.
+  Stark: Zusätzliches Zurückstoßen von Gegnern und mehr Tragekapazität.
+Langsam-Leser: [Analphabet, Schnell-Leser]
+Analphabet: [Langsam-Leser, Schnell-Leser]
+Agoraphobisch: [Klaustrophobisch, Mutig, Adrenalinjunkie]
+Klaustrophobisch: [Agoraphobisch, Mutig, Adrenalinjunkie]
+Untergewichtig: [Übergewichtig, Fettleibig]
+Übergewichtig: [Untergewichtig, Fettleibig]
+Fettleibig: [Untergewichtig, Übergewichtig, Appetitlosigkeit]
+Außer Form: [Couch-Kartoffel, Fit, Athletisch]
+Couch-Kartoffel: [Außer Form, Fit, Athletisch]
+Gebrechlich: [Schwach, Stämmig, Stark]
+Schwach: [Gebrechlich, Stämmig, Stark]
+Taub: [Schwerhörig, Gutes Hörvermögen]
+Schwerhörig: [Taub, Gutes Hörvermögen]
+Geschwindigkeitsdämon: [Sonntagsfahrer]
+Sonntagsfahrer: [Geschwindigkeitsdämon]
+Gewandt: [Schusslig]
+Schusslig: [Gewandt]
+Schlaflos: [Schlafmütze]
+Schlafmütze: [Schlaflos]
+Schnell-Leser: [Langsam-Leser, Analphabet]
+Darm aus Stahl: [Magenleiden]
+Magenleiden: [Darm aus Stahl]
+Anmutig: [Tollpatschig]
+Tollpatschig: [Anmutig]
+Appetitlosigkeit: [Gesunder Appetit, Fettleibig]
+Gesunder Appetit: [Appetitlosigkeit]
+Glückspilz: [Pechvogel]
+Pechvogel: [Glückspilz]
+Dickhäutig: [Dünnhäutig]
+Dünnhäutig: [Dickhäutig]
+Mutig: [Feige, Agora-phobisch, Klaustrophobisch]
+Feige: [Mutig, Adrenalinjunkie]
+Adrenalinjunkie: [Feige]
+Resistent: [Schwaches Immunsystem]
+Schwaches Immunsystem: [Resistent]
+Unauffällig: [Auffällig]
+Auffällig: [Unauffällig]
+Fit: [Athletisch, Couch-Kartoffel, Außer Form]
+Athletisch: [Fit, Couch-Kartoffel, Außer Form]
+Gutes Hörvermögen: [Taub, Schwerhörig]
+Kamel: [Durstig]
+Durstig: [Kamel]
+Luchsaugen: [Kurzsichtig]
+Kurzsichtig: [Luchsaugen]
+Organisiert: [Messie]
+Messie: [Organisiert]
+Schnell-Heiler: [Langsam-Heiler]
+Langsam-Heiler: [Schnell-Heiler]
+Schnell-Lerner: [Langsam-Lerner]
+Langsam-Lerner: [Schnell-Lerner]
+Stämmig: [Stark, Gebrechlich, Schwach]
+Stark: [Stämmig, Gebrechlich, Schwach]
+# Professions
+Koch: [Koch]
+Veteran: [Mutig, Adrenalinjunkie, Feige, Agoraphobisch, Klaustrophobisch, Hämatophobie]
+Fitness-Trainer: [Ernährungswissenschaftler]
+Hamburgerwender: [Koch]
+Kfz-Mechaniker: [Hobby-Kfz-Mechaniker]
+EasyProfessions:
+  Arbeitslos: 8
+  Feuerwehrmann: 0
+  Wildhüter: -4
+  Bauarbeiter: -2
+  Zimmermann: 2
+  Einbrecher: -6
+  Küchenchef: -4
+  Handwerker: -4
+  Fischer: -2
+  Holzfäller: 0
+  Hamburgerwender: 2
+  Elektriker: -4
+  Ingenieur: -4
+  Kfz-Mechaniker: -4
+HardProfessions:
+  Arbeitslos: 8
+  Feuerwehrmann: 0
+  Polizeibeamter: -4
+  Wildhüter: -4
+  Bauarbeiter: -2
+  Wachmann: -2
+  Zimmermann: 2
+  Küchenchef: -4
+  Bauer: 2
+  Fischer: -2
+  Holzfäller: 0
+  Hamburgerwender: 2
+  Schlosser: -6
+ImpossibleProfessions:
+  Feuerwehrmann: 0
+  Polizeibeamter: -4
+  Wachmann: -2
+  Küchenchef: -4
+  Bauer: 2
+  Arzt: 2
+  Veteran: -8
+  Krankenpfleger: 2
+  Holzfäller: 0
+  Fitness-Trainer: -6
+  Hamburgerwender: 2
+  Schlosser: -6
