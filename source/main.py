@@ -5,6 +5,7 @@ Main functions for discord bot and general implementations for challenge generat
 """
 import os
 import asyncio
+import random
 import discord
 from discord import app_commands
 
@@ -18,6 +19,7 @@ from source.game_settings import (
     tim_deutschland,
 )
 from source.game_settings import (
+    config,
     custom_config,
     stream_challenge_config,
     total_sum_of_neg_traits,
@@ -38,6 +40,7 @@ from source.constants import (
     TRAIT_DIFFERENCE_THR,
     USER_INFO_WRONG_CHANNEL,
     USER_INFO_NO_ROLE,
+    DEFAULT_TIMEOUT_MESSAGE
 )
 
 intents = discord.Intents.default()
@@ -52,6 +55,19 @@ CHANNEL_STREAM_CHALLENGE_LINK = os.getenv("CHANNEL_STREAM_CHALLENGE_LINK", None)
 CHANNEL_STREAM_CHALLENGE_ID = os.getenv("CHANNEL_STREAM_CHALLENGE_ID", None)
 SERVER_ID = os.getenv("SERVER_ID", None)
 STREAM_CHALLENGE_CREATOR_ROLE_ID = os.getenv("STREAM_CHALLENGE_CREATOR_ROLE_ID", None)
+
+
+async def get_random_user_timeout_message() -> str:
+    """
+    Function create a creative message for the user in case of an interaction
+    timeout.
+    :return: user message
+    """
+    funny_timeout_messages = config.get("funny_timeout_messages", [])
+    default_timeout_messages = config.get("timeout_message", DEFAULT_TIMEOUT_MESSAGE)
+    if funny_timeout_messages:
+        return f"### {random.choice(funny_timeout_messages)}\n> _{default_timeout_messages}_"
+    return default_timeout_messages
 
 
 async def failed_choice_explanation_option_one(
@@ -112,6 +128,7 @@ class CustomChallenge(discord.ui.View):
     def __init__(self, user, timeout=180):
         super().__init__(timeout=timeout)
         self.user_id = user.user_id
+        self.message = None
         self.response = None
 
     async def on_timeout(self):
@@ -161,13 +178,15 @@ class StreamChallengeApproval(discord.ui.View):
     Class to create dropdown menu for selecting and create a stream challenge
     """
 
-    def __init__(self, user, timeout=180):
+    def __init__(self, user, timeout=3):
         super().__init__(timeout=timeout)
         self.user_id = user.user_id
+        self.message = None
         self.response = None
 
     async def on_timeout(self):
         self.children[0].disabled = True
+        await self.message.edit(view=self)
         self.clear_items()
 
     @discord.ui.select(
@@ -544,9 +563,13 @@ async def stream_challenge(interaction: discord.interactions.Interaction) -> Non
     approval_message = send_user_info_message_for_approval(result)
     await interaction.channel.send(approval_message)
     approval_view = StreamChallengeApproval(user)
-    await interaction.channel.send(view=approval_view)
+    approval_view.message = await interaction.channel.send(view=approval_view)
     await approval_view.wait()
     approval_result = approval_view.response
+    if approval_result is None:
+        user_information = await get_random_user_timeout_message()
+        await interaction.channel.send(user_information)
+        return
     if "yes" in approval_result[0].lower():
         picture_path = await herr_apfelring(result, user)
         with open(picture_path, "rb") as file:

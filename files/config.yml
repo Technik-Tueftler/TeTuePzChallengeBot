@@ -1,5 +1,12 @@
-challenge_id: 4
+challenge_id: 5
+funny_timeout_messages:
+- Wer nicht klickt zur rechten Zeit ... dem wird keine Message gezeigt.
+- Interaktionszeitraum abgeschlossen; warte auf neuen Befehl.
+- Ihre Interaktion ist mir auf den Boden gefallen, sie war nicht mehr haltbar.
+- "Empfehlung: Stellen sie ihre Cursor-Geschwindigkeit h\xF6her, um die Eingabefelder\
+  \ beim n\xE4chsten Versuch rechtzeitig zu erreichen!"
 nothing_selected: Keine
+timeout_message: Interaktion abgelaufen und geschlossen. Bitte Befehl erneut eingeben.
 version: 41.78.16
 wildcard_skip_selection: "Nichts ausw\xE4hlen"
 wildcard_skip_selection_description: "\xDCberspringe die Auswahl"
