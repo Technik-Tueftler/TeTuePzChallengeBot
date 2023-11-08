@@ -15,7 +15,7 @@ from source.game_settings import (
     get_mission,
     get_settings,
     get_end_trait_value,
-    send_user_info_message_with_points,
+    tim_deutschland,
 )
 from source.game_settings import (
     custom_config,
@@ -321,7 +321,7 @@ class StreamChallengeStage(discord.ui.View):
             "StartingArea"
         ][self.game_settings["start_location"]]
         self.children[0].disabled = True
-        user_message = send_user_info_message_with_points(
+        user_message = tim_deutschland(
             self.game_settings["challenge_points"]
         )
         await self.start_interaction.edit_original_response(content=user_message)
@@ -341,11 +341,11 @@ class StreamChallengeStage(discord.ui.View):
         """
         if interaction.user.id != self.user_id:
             return
+        self.children[1].disabled = True
         self.game_settings["challenge_points"] -= total_sum_of_neg_traits(choices)
         self.game_settings["negative_trait_1"] = choices
-        self.children[1].disabled = True
         if self.game_settings["challenge_points"] >= 0:
-            user_message = send_user_info_message_with_points(
+            user_message = tim_deutschland(
                 self.game_settings["challenge_points"]
             )
             await self.start_interaction.edit_original_response(content=user_message)
@@ -371,13 +371,13 @@ class StreamChallengeStage(discord.ui.View):
         """
         if interaction.user.id != self.user_id:
             return
+        self.children[2].disabled = True
         self.game_settings["challenge_points"] -= total_sum_of_neg_traits(choices)
         self.game_settings["negative_trait_2"] = choices
         await interaction.message.edit(view=self)
         await interaction.response.defer()
-        self.children[2].disabled = True
         if self.game_settings["challenge_points"] >= 0:
-            user_message = send_user_info_message_with_points(
+            user_message = tim_deutschland(
                 self.game_settings["challenge_points"]
             )
             await self.start_interaction.edit_original_response(content=user_message)
@@ -401,13 +401,13 @@ class StreamChallengeStage(discord.ui.View):
         """
         if interaction.user.id != self.user_id:
             return
+        self.children[3].disabled = True
         self.game_settings["challenge_points"] -= total_sum_of_neg_traits(choices)
         self.game_settings["negative_trait_3"] = choices
         await interaction.message.edit(view=self)
         await interaction.response.defer()
-        self.children[3].disabled = True
         if self.game_settings["challenge_points"] >= 0:
-            user_message = send_user_info_message_with_points(
+            user_message = tim_deutschland(
                 self.game_settings["challenge_points"]
             )
             await self.start_interaction.edit_original_response(content=user_message)
@@ -431,11 +431,11 @@ class StreamChallengeStage(discord.ui.View):
         """
         if interaction.user.id != self.user_id:
             return
+        self.children[4].disabled = True
         self.game_settings["challenge_points"] -= mission_value(choices)
         self.game_settings["mission"] = choices
         await interaction.message.edit(view=self)
         await interaction.response.defer()
-        self.children[4].disabled = True
         if self.game_settings["challenge_points"] >= 0:
             await interaction.message.edit(view=self)
             self.stop()
@@ -531,7 +531,7 @@ async def stream_challenge(interaction: discord.interactions.Interaction) -> Non
         user_name=interaction.user.display_name,
         user_display_name=interaction.user.global_name,
     )
-    user_message = send_user_info_message_with_points(
+    user_message = tim_deutschland(
         stream_challenge_config["TotalPoints"]
     )
     await interaction.response.send_message(user_message)

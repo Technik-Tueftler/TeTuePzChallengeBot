@@ -18,6 +18,7 @@ from source.constants import (
     USER_INFO_MESSAGE_APPROVAL_4,
     USER_INFO_MESSAGE_APPROVAL_5,
     DEFAULT_SKIP_SELECTION,
+    DEFAULT_NONE_SELECTION,
 )
 
 with open(CONFIG_FILE, encoding="utf-8") as f:
@@ -173,7 +174,7 @@ def total_sum_of_neg_traits(traits: list) -> int:
     return trait_sum
 
 
-def send_user_info_message_with_points(points: int) -> str:
+def tim_deutschland(points: int) -> str:
     """
     User message to inform the rest trait points
     :param points: Current trait points
@@ -230,11 +231,11 @@ def remove_wildcard_selection(traits: list) -> None:
     :param traits: List of traits
     :return: None
     """
-    selection = DEFAULT_SKIP_SELECTION
-    if "wildcard_skip_selection" in config:
-        selection = config["wildcard_skip_selection"]
-    if selection in traits:
+    selection = config.get("wildcard_skip_selection", DEFAULT_SKIP_SELECTION)
+    while selection in traits:
         traits.remove(selection)
+    if not traits:
+        traits.append(config.get("nothing_selected", DEFAULT_NONE_SELECTION))
 
 
 def main() -> None:

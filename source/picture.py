@@ -14,6 +14,7 @@ from source.game_settings import (
     write_config,
     config,
     remove_wildcard_selection,
+    stream_challenge_config,
 )
 from source.constants import (
     GENERIC_IMAGE_PATH,
@@ -73,10 +74,11 @@ async def herr_apfelring(  # pylint: disable=too-many-locals
     zeitstempel = datetime.now().strftime("%Y-%m-%d")
     challenge_id = config["challenge_id"] + 1
     write_config("challenge_id", challenge_id)
+    trait_points = stream_challenge_config["TotalPoints"]
     text = (
         f"#{challenge_id}, erstellt von "
         f"{user.user_display_name.translate(substitution_dictionary)}, "
-        f"{zeitstempel}"
+        f"{zeitstempel}, TP: {trait_points}"
     )
     draw.text((10, 10), text, fill=color, font=font)
     # Location
@@ -121,6 +123,9 @@ async def herr_apfelring(  # pylint: disable=too-many-locals
         )
         pos_y += 20
         pos = (200, pos_y)
+    # Version
+    version = config["version"]
+    draw.text((10, 990), f"v{version}", fill=color, font=font)
     # Bildname und Pfad
     bildname_und_pfad = (
         "../created_challenges/"

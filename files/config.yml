@@ -1,3 +1,5 @@
-challenge_id: 0
+challenge_id: 4
+nothing_selected: Keine
+version: 41.78.16
 wildcard_skip_selection: "Nichts ausw\xE4hlen"
 wildcard_skip_selection_description: "\xDCberspringe die Auswahl"

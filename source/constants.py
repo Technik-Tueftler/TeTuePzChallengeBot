@@ -26,3 +26,4 @@ USER_INFO_WRONG_CHANNEL = "Falscher Channel für diesen Befehl. Bitte hier versu
 USER_INFO_NO_ROLE = "Du hast keine Berechtigung, löse dazu Kanalpunkte ein."
 DEFAULT_SKIP_SELECTION = "Choose nothing"
 DEFAULT_SKIP_SELECTION_DESCRIPTION = "Skip this selection"
+DEFAULT_NONE_SELECTION = "None"
