@@ -133,6 +133,7 @@ class CustomChallenge(discord.ui.View):
 
     async def on_timeout(self):
         self.children[0].disabled = True
+        await self.message.edit(view=self)
         self.clear_items()
 
     @discord.ui.select(
@@ -178,7 +179,7 @@ class StreamChallengeApproval(discord.ui.View):
     Class to create dropdown menu for selecting and create a stream challenge
     """
 
-    def __init__(self, user, timeout=3):
+    def __init__(self, user, timeout=180):
         super().__init__(timeout=timeout)
         self.user_id = user.user_id
         self.message = None
@@ -499,26 +500,30 @@ async def custom_challenge(interaction: discord.interactions.Interaction) -> Non
     )
     view = CustomChallenge(user=user)
     await interaction.response.send_message(view=view)
+    view.message = await interaction.original_response()
     await view.wait()
     result = view.response
-    if result is not None:
-        task_create_custom_challenge = asyncio.create_task(
-            custom_challenge_handler(result[0])
-        )
-        game_settings = await task_create_custom_challenge
-        if game_settings["successful_generated"]:
-            picture_path = await create_challenge_picture(game_settings, user)
-            with open(picture_path, "rb") as file:
-                image = discord.File(file)
-                await interaction.channel.send(
-                    f"{user.user_display_name} das ist deine Challenge:"
-                )
-                await interaction.channel.send(file=image)
-        else:
+    if result is None:
+        user_message = await get_random_user_timeout_message()
+        await interaction.channel.send(user_message)
+        return
+    task_create_custom_challenge = asyncio.create_task(
+        custom_challenge_handler(result[0])
+    )
+    game_settings = await task_create_custom_challenge
+    if game_settings["successful_generated"]:
+        picture_path = await create_challenge_picture(game_settings, user)
+        with open(picture_path, "rb") as file:
+            image = discord.File(file)
             await interaction.channel.send(
-                f"{user.user_display_name}, es ist ein Fehler aufgetreten. Bitte erstelle "
-                f"nochmal eine Challenge. Ein Fehler-Report ist gespeichert."
+                f"{user.user_display_name} das ist deine Challenge:"
             )
+            await interaction.channel.send(file=image)
+    else:
+        await interaction.channel.send(
+            f"{user.user_display_name}, es ist ein Fehler aufgetreten. Bitte erstelle "
+            f"nochmal eine Challenge. Ein Fehler-Report ist gespeichert."
+        )
 
 
 @tree.command(
